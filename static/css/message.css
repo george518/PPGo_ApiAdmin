@@ -1,0 +1,63 @@
+/** kit_admin-v1.0.5 MIT License By http://kit/zhengjinfan.cn e-mail:zheng_jinfan@126.com */
+.kit-message {
+    position: fixed;
+    right: 50px;
+    top: 50px;
+    z-index: 19940201;
+    border-radius: 3px
+}
+
+.kit-message .kit-message-item {
+    min-height: 40px;
+    background-color: #fff;
+    border-radius: 3px;
+    min-width: 250px;
+    margin-top: 15px;
+    position: relative;
+    border: 1px solid #ecf0f5
+}
+
+.kit-message .kit-message-item:first-child {
+    margin-top: 0
+}
+
+.kit-message .kit-message-item .kit-message-body {
+    margin-right: 40px;
+    line-height: 40px;
+    padding: 0 10px 0 20px
+}
+
+.kit-message .kit-message-item .kit-close {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    text-align: center;
+    line-height: 40px;
+    cursor: pointer
+}
+
+.kit-message .kit-skin-red {
+    color: #FF5722!important
+}
+
+.kit-message .kit-skin-orange {
+    color: #FFB800!important
+}
+
+.kit-message .kit-skin-cyan {
+    color: #2F4056!important
+}
+
+.kit-message .kit-skin-blue {
+    color: #1E9FFF!important
+}
+
+.kit-message .kit-skin-black {
+    color: #393D49!important
+}
+
+.kit-message .kit-skin-default {
+    color: #009688!important
+}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{{.siteName}}</title>
+    {{if .zTree}}
+    <link rel="stylesheet" href="/static/zTree3/css/demo.css?t=5" type="text/css">
+    <link rel="stylesheet" href="/static/zTree3/css/zTreeStyle/zTreeStyle.css" type="text/css">
+    {{end}}
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <script src="/static/layui/layui.js?s=36"></script>
+    <script src="/static/js/main.js?s=2124"></script>
+</head>
+<div class="layui-layout layui-layout-admin" style="padding-left: 20px;">
+    <div class="layui-btn-group demoTable" style="margin-top: 10px; ">
+        <a class="layui-btn" data-type="tabAdd" href="/admin/add">新增</a>   
+    </div>               
+    <table class="layui-table" lay-data="{width: 'full-10', height: 'full-105', url:'/admin/table', page:true, id:'idTest'}" lay-filter="demo">
+        <thead>
+            <tr>
+                <th lay-data="{field:'id', width:80, fixed: true}">ID</th>
+                <th lay-data="{field:'login_name', width:200}">登录账户</th>
+                <th lay-data="{field:'real_name', width:150}">真实姓名</th>
+                <th lay-data="{field:'phone', width:200}">手机号码</th>
+                <th lay-data="{field:'email', width:200}">电子邮箱</th>
+                <th lay-data="{fixed: 'right', width:200, align:'center', toolbar: '#barDemo'}"></th>
+            </tr>
+        </thead>
+    </table>
+
+    <script type="text/html" id="barDemo">
+       <!--  <a class="layui-btn layui-btn-primary layui-btn-mini" lay-event="detail">查看</a> -->
+        <a class="layui-btn layui-btn-mini" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-mini" lay-event="del">删除</a>
+    </script>
+</div>
+<script>
+    layui.use('table', function(){
+        var table = layui.table;
+        var element = layui.element;
+    //监听表格复选框选择
+    table.on('checkbox(demo)', function(obj){
+        console.log(obj);
+    });
+
+    //监听工具条
+    table.on('tool(demo)', function(obj){
+        var data = obj.data;
+        if(obj.event === 'detail'){
+            //layer.msg('ID：'+ data.id + ' 的查看操作');
+        } else if(obj.event === 'del'){
+            if (data.id==1) {
+               layer.msg('超级管理员不允许删除');
+               return false;
+            }
+            layer.confirm('真的删除【'+data.login_name+'】账号么', function(index){
+            var jsData = {'id':data.id}
+            $.post('{{urlfor "AdminController.AjaxDel"}}', jsData, function (out) {
+                if (out.status == 0) {
+                    layer.alert('删除成功了', {icon: 1},function(index){
+                        layer.close(index);
+                        window.location.reload();
+                    });
+                } else {
+                    layer.msg(out.message)
+                }
+            }, "json");
+            // obj.del();
+            layer.close(index);
+        });
+        } else if(obj.event === 'edit'){
+            window.location.href="/admin/edit?id="+data.id
+        }
+    });
+});
+
+</script>
+</body>
+</html>

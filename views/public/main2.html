@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <title>{{.siteName}}</title>
+        {{if .zTree}}
+        <link rel="stylesheet" href="/static/zTree3/css/demo.css?t=5" type="text/css">
+        <link rel="stylesheet" href="/static/zTree3/css/zTreeStyle/zTreeStyle.css" type="text/css">
+        {{end}}
+        <link rel="stylesheet" href="/static/layui/css/layui.css">
+        <link rel="stylesheet" href="/static/css/main.css">
+        <script src="/static/layui/layui.js?s=36"></script>
+        <script src="/static/js/main.js?s=2124"></script>
+    </head>
+    <style>
+        a{text-decoration : none} 
+        a:hover{text-decoration:none;} 
+    </style>
+    <body>
+
+        <div class="layui-body x-main">
+            <div class="x-slide_left"></div>
+            <div class="nav-title">
+                <div class="tl fl">
+                    {{.pageTitle}}
+                </div>
+                <div class="tr fr">
+                    <button class="layui-btn layui-btn-radius layui-btn-primary layui-btn-mini" onclick="javascript:window.location.reload();">刷</button>
+                </div>
+                
+            </div>
+            <!-- 内容主体区域 -->
+            {{.LayoutContent}}
+        </div>
+          
+        <div class="layui-footer x-main">
+            <!-- 底部固定区域 -->
+            © layui.com - 底部固定区域
+        </div>
+    </body>
+</html>
