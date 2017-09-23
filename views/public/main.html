@@ -7,7 +7,7 @@
     <title>{{.siteName}}</title>
 
     <link rel="stylesheet" href="/static/layui/css/layui.css">
-    <link rel="stylesheet" href="/static/css/app.css?t=123">
+    <link rel="stylesheet" href="/static/css/app.css?t=154">
     <link rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css" media="all">
 </head>
 
@@ -16,10 +16,6 @@
     <div class="layui-header">
         <div class="layui-logo">{{.siteName}}</div>
         <div class="layui-logo kit-logo-mobile">P</div>
-        <!--<ul class="layui-nav layui-layout-left kit-nav" kit-one-level>-->
-            <!--<li class="layui-nav-item"><a href="javascript:;">控制台</a></li>-->
-            <!--<li class="layui-nav-item"><a href="javascript:;">商品管理</a></li>-->
-        <!--</ul>-->
         <ul class="layui-nav layui-layout-right kit-nav">
             <li class="layui-nav-item">
                 <a href="javascript:;">
@@ -39,14 +35,13 @@
                 {{if $elem}}
                 <li class="layui-nav-item ">
                     <a class="" href="javascript:;">
-                        <i class="layui-icon" style="top: 3px;">{{str2html $elem.Icon}}</i>
-                        <span>{{$elem.AuthName}}</span>
+                        <i class="fa {{$elem.Icon}}"></i> &nbsp;&nbsp;<span>{{$elem.AuthName}}</span>
                     </a>
                     <dl class="layui-nav-child">
                         {{range $i, $e := $.SideMenu2}}
                         {{if eq $e.Pid $elem.Id}}
-                        <dd><a data-url="{{$e.AuthUrl}}" data-icon="&#xe628;" data-title="{{$e.AuthName}}" kit-target data-id="{{$e.Id}}">
-                            <i class="layui-icon">&#xe6c6;</i> <span>{{$e.AuthName}}</span>
+                        <dd><a data-url="{{$e.AuthUrl}}" data-icon="&#xe715;" data-title="{{$e.AuthName}}" kit-target data-id="{{$e.Id}}">
+                            <i class="fa {{$e.Icon}}"></i>  &nbsp;&nbsp;<span>{{$e.AuthName}}</span>
                         </a>
                         </dd>
                         {{end}}

@@ -53,9 +53,9 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">图标字体</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="icon" autocomplete="off" placeholder="" class="layui-input">
+                        <input type="text" name="icon" autocomplete="off" placeholder="fa-bar-chart-o" class="layui-input">
                     </div>
-                    <div class="layui-form-mid layui-word-aux"><a href="http://www.layui.com/doc/element/icon.html" target="_blank">点击这里参考</a></div>
+                    <div class="layui-form-mid layui-word-aux"><a href="http://fontawesome.dashgame.com" target="_blank">点击这里参考</a></div>
                 </div>
 
                 <div class="layui-form-item">
@@ -74,10 +74,13 @@
                     </div>
                     <div class="layui-form-mid layui-word-aux">是否左侧导航栏显示</div>
                 </div>
-                <input type="hidden" name="id" id="id" value="0">
+
+                <input type="hidden" name="id" class="layui-input" id="id" value="0">
+                
                 <div class="layui-form-item">
                     <div class="layui-input-block">
-                        <button class="layui-btn" lay-submit="" lay-filter="save">保存</button>
+                        <button class="layui-btn" lay-submit="" lay-filter="add">新增</button>
+                        <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="edit">修改</button>
                         <a class="layui-btn layui-btn-danger" href="javascript:;" id="del" lay-submit="">删除</a>
                         <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                     </div>
@@ -102,11 +105,21 @@ var $,form;
     }).use(['form','element','layer','jquery'],function(){
       form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
       $ = layui.jquery;
-      // layer = layui.layer
-        $("form").submit(function () {
+      form.on("submit",function(data) {
+            var sub_type = data.elem.getAttribute("lay-filter")
+            console.log(sub_type)
+            if(sub_type=="add"){
+                $("#id").val(0);
+            }else{
+                if($("#id").val()=="0"){
+                    layer.msg("修改先请在左侧权限树选择节点")
+                    return false
+                }
+            }
+            console.log($("form").serialize());
 
-            $.post('{{urlfor "AuthController.AjaxSave"}}', $(this).serialize(), function (out) {
-                console.log($(this).serialize());
+            $.post('{{urlfor "AuthController.AjaxSave"}}', $("form").serialize(), function (out) {
+                
                 if (out.status == 0) {
                     // layer.msg("操作成功")
                     layer.alert('你成功了', {icon: 1},function(index){

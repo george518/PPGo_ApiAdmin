@@ -88,7 +88,7 @@ func (self *AdminController) Edit() {
 
 func (self *AdminController) AjaxSave() {
 	Admin_id, _ := self.GetInt("id")
-	if(Admin_id == 0){
+	if Admin_id == 0 {
 		Admin := new(models.Admin)
 		Admin.LoginName = strings.TrimSpace(self.GetString("login_name"))
 		Admin.RealName = strings.TrimSpace(self.GetString("real_name"))
@@ -106,7 +106,7 @@ func (self *AdminController) AjaxSave() {
 			self.ajaxMsg("登录名已经存在", MSG_ERR)
 		}
 		//新增
-		pwd, salt := libs.Password(4)
+		pwd, salt := libs.Password(4, "")
 		Admin.Password = pwd
 		Admin.Salt = salt
 		Admin.CreateTime = time.Now().Unix()
@@ -131,9 +131,9 @@ func (self *AdminController) AjaxSave() {
 	Admin.UpdateId = self.userId
 	Admin.Status = 1
 
-	resetPwd,_ := self.GetInt("reset_pwd")
-	if resetPwd==1 {
-		pwd, salt := libs.Password(4)
+	resetPwd, _ := self.GetInt("reset_pwd")
+	if resetPwd == 1 {
+		pwd, salt := libs.Password(4, "")
 		Admin.Password = pwd
 		Admin.Salt = salt
 	}

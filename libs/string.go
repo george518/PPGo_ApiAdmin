@@ -39,9 +39,12 @@ func IsEmail(b []byte) bool {
 	return emailPattern.Match(b)
 }
 
-func Password(len int) (pwd string, salt string) {
+func Password(len int, pwdO string) (pwd string, salt string) {
 	salt = GetRandomString(4)
 	defaultPwd := "george518"
+	if pwdO != "" {
+		defaultPwd = pwdO
+	}
 	pwd = Md5([]byte(defaultPwd + salt))
 	return pwd, salt
 }
@@ -64,14 +67,3 @@ func GetRandomString(lens int) string {
 	}
 	return string(result)
 }
-
-// func InterfaceToInt(i interface{}) int {
-// 	var s int
-// 	switch v := i.(type) {
-// 	case int:
-// 		s = v
-// 	default:
-// 		s = 0
-// 	}
-// 	return s
-// }

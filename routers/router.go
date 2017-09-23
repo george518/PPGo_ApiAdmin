@@ -26,4 +26,5 @@ func init() {
 	beego.AutoRouter(&controllers.AuthController{})
 	beego.AutoRouter(&controllers.RoleController{})
 	beego.AutoRouter(&controllers.AdminController{})
+	beego.AutoRouter(&controllers.UserController{})
 }
