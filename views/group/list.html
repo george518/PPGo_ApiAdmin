@@ -1,1 +1,61 @@
-分组设置
+<div class="layui-layout layui-layout-admin" style="padding-left: 20px;">
+    <div class="layui-btn-group demoTable" style="margin-top: 10px; ">
+        <a class="layui-btn" data-type="tabAdd" href="/group/add">新增</a>   
+    </div>               
+    <table class="layui-table" lay-data="{width: 'full-10', height: 'full-105', url:'/group/table', page:true, id:'idTest'}" lay-filter="demo">
+        <thead>
+            <tr>
+                
+                <th lay-data="{field:'id', width:80, fixed: true}">ID</th>
+                <th lay-data="{field:'group_name', width:200}">角色名称</th>
+                <th lay-data="{field:'detail', width:250}">备注</th>
+                <th lay-data="{field:'create_time', width:150}">创建时间</th>
+                <th lay-data="{field:'update_time', width:150}">修改时间</th>
+                <th lay-data="{fixed: 'right', width:200, align:'center', toolbar: '#barDemo'}"></th>
+            </tr>
+        </thead>
+    </table>
+
+    <script type="text/html" id="barDemo">
+       <!--  <a class="layui-btn layui-btn-primary layui-btn-mini" lay-event="detail">查看</a> -->
+        <a class="layui-btn layui-btn-mini" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-mini" lay-event="del">删除</a>
+    </script>
+</div>
+<script>
+    var $;
+    layui.config({
+            base : "js/"
+    }).use(['table','element','layer','jquery'], function(){
+        var table = layui.table;
+        var element = layui.element;
+        $ = layui.jquery
+
+    //监听工具条
+    table.on('tool(demo)', function(obj){
+        var data = obj.data;
+        if(obj.event === 'detail'){
+            //layer.msg('ID：'+ data.id + ' 的查看操作');
+        } else if(obj.event === 'del'){
+            layer.confirm('真的删除【'+data.group_name+'】分组么', function(index){
+            var jsData = {'id':data.id}
+            $.post('{{urlfor "GroupController.AjaxDel"}}', jsData, function (out) {
+                if (out.status == 0) {
+                    layer.alert('删除成功了', {icon: 1},function(index){
+                        layer.close(index);
+                        window.location.reload();
+                    });
+                } else {
+                    layer.msg(out.message)
+                }
+            }, "json");
+            obj.del();
+            layer.close(index);
+        });
+        } else if(obj.event === 'edit'){
+            window.location.href="/group/edit?id="+data.id
+        }
+    });
+});
+
+</script>

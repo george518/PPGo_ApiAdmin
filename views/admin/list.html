@@ -37,9 +37,13 @@
     </script>
 </div>
 <script>
-    layui.use('table', function(){
+    var $;
+    layui.config({
+            base : "js/"
+    }).use(['table','element','layer','jquery'], function(){
         var table = layui.table;
         var element = layui.element;
+        $ = layui.jquery
     //监听表格复选框选择
     table.on('checkbox(demo)', function(obj){
         console.log(obj);
