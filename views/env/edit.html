@@ -1,0 +1,66 @@
+<div class="layui-layout layui-layout-admin" style="padding-left: 40px;margin-top: 20px;">
+<div style="margin: 10px 0px">
+        <blockquote class="layui-elem-quote">
+            说明:测试接口使用
+        </blockquote>
+    </div>
+<form class="layui-form" action="" method="post" >
+    <div class="layui-form-item">
+        <label class="layui-form-label">环境名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="env_name" id="env_name" lay-verify="required" autocomplete="off" placeholder="环境名称" class="layui-input" value="{{.env.env_name}}">
+        </div>
+        <div class="layui-form-mid layui-word-aux">*</div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">URL地址</label>
+        <div class="layui-input-inline">
+            <input type="text" name="env_host" id="env_host" lay-verify="required" autocomplete="off" placeholder="http://127.0.0.1:9090" class="layui-input" value="{{.env.env_host}}">
+        </div>
+        <div class="layui-form-mid layui-word-aux">*</div>
+    </div>
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-inline" style="width: 300px;">
+            <textarea name="detail" id="detail" placeholder="请输入内容" class="layui-textarea">{{.env.detail}}</textarea>
+        </div>
+    </div>
+
+    <input type="hidden" id="id" name="id" value="{{.env.id}}">
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit="" lay-filter="sub">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+</div>
+<script>
+var $;
+    layui.config({
+            base : "js/"
+    }).use(['form','element','layer','jquery'],function(){
+        var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+        var $ = layui.jquery;
+    
+        form.on('submit(sub)', function(data){
+            var form_data = $("form").serialize();
+            $.post('{{urlfor "EnvController.AjaxSave"}}', form_data, function (out) {
+                if (out.status == 0) {
+                    layer.msg("操作成功",{icon: 1},function () {
+                        window.location.href='{{urlfor "EnvController.List"}}'
+                    })
+                } else {
+                    layer.msg(out.message)
+                }
+            }, "json");
+            return false;
+        });
+      
+      //但是，如果你的HTML是动态生成的，自动渲染就会失效
+      //因此你需要在相应的地方，执行下述方法来手动渲染，跟这类似的还有 element.init();
+      form.render();
+}); 
+</script>
