@@ -9,7 +9,10 @@
         <link rel="stylesheet" href="/static/zTree3/css/zTreeStyle/zTreeStyle.css" type="text/css">
         {{end}}
         <link rel="stylesheet" href="/static/layui/css/layui.css">
-        <link rel="stylesheet" href="/static/css/main.css">
+        <link rel="stylesheet" href="/static/css/main.css?s=1223">
+        {{if .ApiCss}}
+            <link rel="stylesheet" href="/static/css/api.css?s=4323">
+        {{end}}
         <link rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css" media="all">
         <script src="/static/layui/layui.js?s=36"></script>
 
@@ -21,7 +24,6 @@
             </div>
             <div class="tr fr">
                 <button class="layui-btn layui-btn-radius layui-btn-primary layui-btn-mini" onclick="javascript:history.go(-1);"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
-
                 <button class="layui-btn layui-btn-radius layui-btn-primary layui-btn-mini" onclick="javascript:window.location.reload();"><i class="fa fa-refresh" aria-hidden="true"></i></button>
 
             </div>

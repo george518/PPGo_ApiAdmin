@@ -1,1 +1,195 @@
-API列表页
+<div class="layui-container api_contrainer">  
+    <div class="layui-row">
+        <div class="layui-col-md3 api_side mt10">
+            
+
+            <form class="layui-form" action="" name="select_group">
+                <div class="layui-row">
+                    <div class="layui-inline layui-col-md6">
+                        <div class="layui-input-inline">
+                            <select name="group_id" lay-verify="required"  lay-search="" style="width: 100%">
+                                <option value="">请选择分组</option>
+                                {{range $index,$elem := .Groups}}
+                                <option value="{{$elem.id}}">{{$elem.group_name}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-col-md5 ml8">
+                        <a href="javascript:;" id="add_source" class="layui-btn"> <i class="fa fa-plus-circle"></i>新增资源 </a>
+                    </div>
+                </div>
+            </form>
+
+            <div class="api_list">
+                <ul>
+                    {{range $i,$e:=.Source}}
+                    <li>
+                        <a href="javascript:;" data-id="{{$e.id}}" data-name="{{$e.source_name}}" {{if eq $i 0}} class="select"{{end}}>
+                            &nbsp;<i class="fa fa-angle-right"></i> &nbsp;&nbsp;{{$e.source_name}}
+                        </a>
+                        <span>
+                            <a href="javascript:;" title="删除" data-type="delete" data-id="{{$e.id}}" data-name="{{$e.source_name}}" class="red"><i class="layui-icon">&#xe640;</i></a>
+                            <a href="javascript:;" title="编辑" data-type="edit" data-id="{{$e.id}}" data-name="{{$e.source_name}}"><i class="layui-icon">&#xe642;</i></a>
+                            <a href="javascript:;" title="添加" data-type="add" data-id="{{$e.id}}" data-name="{{$e.source_name}}"><i class="layui-icon">&#xe654;</i></a>
+                            
+                        </span>
+                    </li>
+                    {{end}}
+                </ul>
+            </div>
+        </div>
+        <!-- 右侧内容 -->
+        <div class="layui-col-md9 api_content">
+            <div class="api_info">
+               <div class="title"><i class="fa fa-link"></i>&nbsp;&nbsp;接口资源名称</div>
+               <div class="tag">
+                   <div><i class="layui-icon">&#xe642;</i></div>
+               </div>
+            </div>
+            <div class="api-main" id="api-main">
+                
+                
+
+            </div>
+            
+            <!-- <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">接口说明</li>
+                    <li class="layui">GET</li>
+                    <li>POST</li>
+                    <li>PUT</li>
+                    <li>PATCH</li>
+                    <li>DELETE</li>
+                </ul>
+                <div class="layui-tab-content" style="height: 100px;">
+                    <div class="layui-tab-item layui-show">{{template "api/info.html" .}}</div>
+                    <div class="layui-tab-item">{{template "api/get.html" .}}</div>
+                    <div class="layui-tab-item">{{template "api/post.html" .}}</div>
+                    <div class="layui-tab-item">{{template "api/put.html" .}}</div>
+                    <div class="layui-tab-item">{{template "api/patch.html" .}}</div>
+                    <div class="layui-tab-item">{{template "api/delete.html" .}}</div>
+                </div>
+            </div>  -->
+        </div>
+    </div>
+</div>
+
+<script>
+var $;
+    layui.config({
+            base : "js/"
+    }).use(['form','element','layer','jquery'],function(){
+        var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+        var $ = layui.jquery;
+
+        $("#add_source").on("click",function() {
+            layer.open({
+                type: 2,
+                shade: 0.3,
+                id:1,
+                title:"新增资源",
+                content: '/api/add',
+                area:['500px','250px'],
+                cancel:function(){
+                    alert('yes');
+                    window.location.reload();
+                    layer.close(index);
+                }
+            }); 
+        })
+
+        //资源选中事件
+        $(".api_list ul li a").on('click',function(){
+            var obj = $(this);
+            var api_name = '<i class="fa fa-link"></i>&nbsp;&nbsp;'+obj.attr("data-name");
+            $(".api_info .title").html(api_name);
+            $("#api-main").load("/api/show?id="+obj.attr("data-id"));
+            obj.parent().addClass("select").siblings().removeClass("select");
+            obj.parent().find("span").show();
+            obj.parent().siblings().find("span").hide();
+
+            if(obj.attr("data-type")=="delete"){
+                
+
+                var id = obj.attr("data-id");
+                var name = obj.attr("data-name");
+                layer.confirm('真的删除【'+name+'】么', function(){
+                    var del_data = {"id":id}
+                    $.post('{{urlfor "ApiController.AjaxDel"}}', del_data, function (out) {
+                        if (out.status == 0) {
+                            layer.msg("操作成功",{icon: 1},function () {
+                                window.location.href='{{urlfor "ApiController.List"}}'
+                            })
+                        } else {
+                            layer.msg(out.message)
+                        }
+                    }, "json");        
+                    return false;
+                });
+                return false;
+
+            }
+
+            if(obj.attr("data-type")=="edit"){
+                var id = obj.attr("data-id");
+                layer.open({
+                    type: 2,
+                    shade: 0.3,
+                    id:1,
+                    title:"编辑-"+obj.attr("data-name"),
+                    content: '/api/edit?id='+id,
+                    area:['500px','250px'],
+                }); 
+            }
+
+            if(obj.attr("data-type")=="add"){
+                var id = obj.attr("data-id");
+                layer.open({
+                    type: 2,
+                    shade: 0.3,
+                    id:1,
+                    title:"添加接口-"+obj.attr("data-name"),
+                    content: '/api/addapi?sid='+id,
+                    area:['800px','450px'],
+                }); 
+            }
+
+
+        })
+
+        // $(".api_list ul li").on('mouseover',function(){
+        //     var obj = $(this)
+        //     $(this).addClass("select").siblings().removeClass("select");
+        //     obj.find("span").show();
+        // })
+
+        form.on("select",function(data){
+            alert('yes');
+        })
+
+
+
+    
+        form.on('submit(sub)', function(data){
+            var form_data = $("form").serialize();
+            $.post('{{urlfor "CodeController.AjaxSave"}}', form_data, function (out) {
+                if (out.status == 0) {
+                    layer.msg("操作成功",{icon: 1},function () {
+                        window.location.href='{{urlfor "CodeController.List"}}'
+                    })
+                } else {
+                    layer.msg(out.message)
+                }
+            }, "json");
+            return false;
+        });
+
+      
+      //但是，如果你的HTML是动态生成的，自动渲染就会失效
+      //因此你需要在相应的地方，执行下述方法来手动渲染，跟这类似的还有 element.init();
+      form.render();
+}); 
+
+
+</script>

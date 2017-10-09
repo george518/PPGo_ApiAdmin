@@ -45,11 +45,14 @@ func (self *BaseController) Prepare() {
 	self.Data["curRoute"] = self.controllerName + "." + self.actionName
 	self.Data["curController"] = self.controllerName
 	self.Data["curAction"] = self.actionName
-	noAuth := "ajaxsave/ajaxdel/table/loginin/loginout/getnodes/start"
-	isNoAuth := strings.Contains(noAuth, self.actionName)
-	if isNoAuth == false {
-		self.auth()
-	}
+	// noAuth := "ajaxsave/ajaxdel/table/loginin/loginout/getnodes/start"
+	// isNoAuth := strings.Contains(noAuth, self.actionName)
+	// if isNoAuth == false {
+	self.auth()
+	// }
+
+	fmt.Println(self.userId)
+	fmt.Println("========")
 	self.Data["loginUserId"] = self.userId
 	self.Data["loginUserName"] = self.userName
 }
@@ -78,7 +81,9 @@ func (self *BaseController) auth() {
 			// fmt.Println(noAuth)
 
 			isHasAuth := strings.Contains(self.allowUrl, self.controllerName+"/"+self.actionName)
-			if isHasAuth == false {
+			noAuth := "ajaxsave/ajaxdel/table/loginin/loginout/getnodes/start/show"
+			isNoAuth := strings.Contains(noAuth, self.actionName)
+			if isHasAuth == false && isNoAuth == false {
 				self.Ctx.WriteString("没有权限")
 				return
 			}
