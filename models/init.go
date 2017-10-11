@@ -9,7 +9,6 @@
 package models
 
 import (
-	"fmt"
 	"net/url"
 
 	"github.com/astaxie/beego"
@@ -28,14 +27,14 @@ func Init() {
 		dbport = "3306"
 	}
 	dsn := dbuser + ":" + dbpassword + "@tcp(" + dbhost + ":" + dbport + ")/" + dbname + "?charset=utf8"
-	fmt.Println(dsn)
+	// fmt.Println(dsn)
 
 	if timezone != "" {
 		dsn = dsn + "&loc=" + url.QueryEscape(timezone)
 	}
 	orm.RegisterDataBase("default", "mysql", dsn)
 	orm.RegisterModel(new(Auth), new(Role), new(RoleAuth), new(Admin),
-		new(Group), new(Env), new(Code), new(Api))
+		new(Group), new(Env), new(Code), new(Api), new(ApiDetail), new(ApiParam))
 
 	if beego.AppConfig.String("runmode") == "dev" {
 		orm.Debug = true

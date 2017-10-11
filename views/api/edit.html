@@ -41,7 +41,6 @@ var $;
     }).use(['form','element','layer','jquery'],function(){
         var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
         var $ = layui.jquery;
-    
         form.on('submit(sub)', function(data){
             var form_data = data.field;
             $.post('{{urlfor "ApiController.AjaxSave"}}', form_data, function (out) {

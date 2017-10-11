@@ -45,7 +45,8 @@ var $;
             $.post('{{urlfor "ApiController.AjaxSave"}}', form_data, function (out) {
                 if (out.status == 0) {
                     layer.msg("操作成功",{icon: 1},function () {
-                        window.location.href='{{urlfor "ApiController.Add"}}'
+                        window.parent.layer.closeAll();
+                        window.parent.location.reload();
                     })
                 } else {
                     layer.msg(out.message)

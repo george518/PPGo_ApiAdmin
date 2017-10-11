@@ -1,105 +1,82 @@
 <div class="api-infos">
-
-    <div class="title"><i class="fa fa-list-alt"></i> &nbsp;基本信息 </div>
+    {{range $index,$elem := .Detail}}
+    <div class="title"><i class="fa fa-list-alt"></i> &nbsp;{{$elem.api_name}} <a href="javascript:;" data-id="{{$elem.id}}" data-name="{{$elem.api_name}}" class="edit_api" style="color:rgb(76,174,81); "><i class="layui-icon">&#xe642;</i></a></div>
+    <hr class="layui-bg-green">
     <ul>
-        <li>接口地址：common/car/queryCarList</li>
-        <li>支持格式：json</li>
-        <li>请求协议：HTTP</li>
-        <li>请求方式：GET、POST</li>
-        <li>请求示例：http://apis.eolinker.com/common/car/queryCarList?productKey=您的产品密钥&productKey=参数1</li>
-        <li>接口状态：审核通过，正在审核，暂停使用</li>
-        <li>开发人员：郝大全</li>
-        <li>维护人员：郝大全</li>
-        <li>审核人员：郝大全</li>
-        <li>上线时间：2017-11-12 12：00：00</li>
-        <li>最后修改：2017-11-12 12：00：00</li>
+        <li>接口名称：{{$elem.api_name}}</li>
+        <li>接口地址：{{$elem.api_url}}</li>
+        <li>请求协议：{{$elem.protocol_type}}</li>
+        <li>请求方式：{{$elem.method}}</li>
+        <li>请求示例：{{$elem.example}}</li>
+        <li>接口状态：<font {{if eq $elem.status 0}}class="layui-bg-red" {{else if eq $elem.status 3}} class="layui-bg-green" {{else }}  class="layui-bg-orange"{{end}}>{{$elem.audit_status}}</font></li>
+        <li>开发人员：{{$elem.create_name}}</li>
+        <li>维护人员：{{$elem.update_name}}</li>
+        <li>审核人员：{{$elem.audit_name}}</li>
+        <li>上线时间：{{if eq $elem.status 3}}{{$elem.audit_time}}{{end}}</li>
+        <li>最后修改：{{$elem.update_time}}</li>
+        <li>备注说明：{{$elem.detail}}</li>
     </ul>
 
-    
-    <div class="title"><i class="fa fa-list-alt"></i> &nbsp;基础参数 </div>
+    <div class="title"> &nbsp;请求参数 </div>
     <table class="layui-table">
         <colgroup>
             <col width="150">
             <col width="300">
+            <col>
+            <col>
             <col>
         </colgroup>
         <thead>
             <tr>
                 <th>属性</th>
-                <th>值</th>
+                <th>类型</th>
+                <th>默认值</th>
+                <th>必填</th>
                 <th>说明</th>
             </tr> 
         </thead>
         <tbody>
+            {{range $i,$e:=$elem.Params}}
             <tr>
-                <td>app_id</td>
-                <td>10001</td>
-                <td></td>
+                <td>{{$e.ApiKey}}</td>
+                <td>{{$e.ApiType}}</td>
+                <td>{{$e.ApiValue}}</td>
+                <td>{{$e.IsNull}}</td>
+                <td>{{$e.ApiDetail}}</td>
             </tr>
-
-            <tr>
-                <td>sign</td>
-                <td></td>
-                <td>需要申请</td>
-            </tr>
-            <tr>
-                <td>time</td>
-                <td></td>
-                <td>unix时间戳</td>
-            </tr>
-            <tr>
-                <td>mothod</td>
-                <td>GET/POST....</td>
-                <td></td>
-            </tr>
+            {{end}}
         </tbody>
     </table>
 
-    <div class="title"><i class="fa fa-list-alt"></i> &nbsp;状态码 </div>
+    <div class="title"> &nbsp;返回示例 </div>
+    <pre class="layui-code" lay-title="JSON">{{$elem.result}}
+    </pre>
+   
+    {{end}}
     
-    <table class="layui-table">
-        <colgroup>
-            <col width="150">
-            <col width="300">
-            <col>
-        </colgroup>
-        <thead>
-            <tr>
-                <th>状态码</th>
-                <th>描述</th>
-                <th>说明</th>
-            </tr> 
-        </thead>
-        <tbody>
-            <tr>
-                <td>200</td>
-                <td>10001</td>
-                <td></td>
-            </tr>
-
-            <tr>
-                <td>300</td>
-                <td></td>
-                <td>需要申请</td>
-            </tr>
-            <tr>
-                <td>500</td>
-                <td></td>
-                <td>unix时间戳</td>
-            </tr>
-            <tr>
-                <td>9001</td>
-                <td>GET/POST....</td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>
-    
-    <div class="title"><i class="fa fa-list-alt"></i> &nbsp;示例下载 </div>
-    <span class="layui-breadcrumb" lay-separator="|">
-        <a href="">JAVA</a>
-        <a href="">PHP</a>
-        <a href="">PYTHON</a>
-        <a href="">GO</a>
-    </span>
 </div>
+
+<script>
+var $;
+    layui.config({
+            base : "js/"
+    }).use(['form','element','layer','jquery',"code"],function(){
+        var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+        var $ = layui.jquery;
+
+        $(".edit_api").on("click",function(){
+            var obj = $(this) 
+            var id = obj.attr("data-id");
+            layer.open({
+                type: 2,
+                shade: 0.3,
+                id:1,
+                title:"修改接口-"+obj.attr("data-name"),
+                content: '/api/editapi?id='+id,
+                area:['800px','450px'],
+            }); 
+        })
+
+        layui.code();
+});
+</script>

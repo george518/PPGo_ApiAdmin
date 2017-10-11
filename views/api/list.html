@@ -1,8 +1,6 @@
 <div class="layui-container api_contrainer">  
     <div class="layui-row">
         <div class="layui-col-md3 api_side mt10">
-            
-
             <form class="layui-form" action="" name="select_group">
                 <div class="layui-row">
                     <div class="layui-inline layui-col-md6">
@@ -10,7 +8,7 @@
                             <select name="group_id" lay-verify="required"  lay-search="" style="width: 100%">
                                 <option value="">请选择分组</option>
                                 {{range $index,$elem := .Groups}}
-                                <option value="{{$elem.id}}">{{$elem.group_name}}</option>
+                                <option value="{{$elem.id}}" {{if eq $.Gid $elem.id}} selected{{end}} >{{$elem.group_name}}</option>
                                 {{end}}
                             </select>
                         </div>
@@ -42,9 +40,9 @@
         <!-- 右侧内容 -->
         <div class="layui-col-md9 api_content">
             <div class="api_info">
-               <div class="title"><i class="fa fa-link"></i>&nbsp;&nbsp;接口资源名称</div>
+               <div class="title" id="data-id" data-id="1"><i class="fa fa-link"></i>&nbsp;&nbsp;接口资源名称</div>
                <div class="tag">
-                   <div><i class="layui-icon">&#xe642;</i></div>
+                    <a href="javascript:;" id="refresh_api"><i class="fa fa-refresh" aria-hidden="true"></i></a>
                </div>
             </div>
             <div class="api-main" id="api-main">
@@ -52,25 +50,6 @@
                 
 
             </div>
-            
-            <!-- <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
-                <ul class="layui-tab-title">
-                    <li class="layui-this">接口说明</li>
-                    <li class="layui">GET</li>
-                    <li>POST</li>
-                    <li>PUT</li>
-                    <li>PATCH</li>
-                    <li>DELETE</li>
-                </ul>
-                <div class="layui-tab-content" style="height: 100px;">
-                    <div class="layui-tab-item layui-show">{{template "api/info.html" .}}</div>
-                    <div class="layui-tab-item">{{template "api/get.html" .}}</div>
-                    <div class="layui-tab-item">{{template "api/post.html" .}}</div>
-                    <div class="layui-tab-item">{{template "api/put.html" .}}</div>
-                    <div class="layui-tab-item">{{template "api/patch.html" .}}</div>
-                    <div class="layui-tab-item">{{template "api/delete.html" .}}</div>
-                </div>
-            </div>  -->
         </div>
     </div>
 </div>
@@ -82,7 +61,6 @@ var $;
     }).use(['form','element','layer','jquery'],function(){
         var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
         var $ = layui.jquery;
-
         $("#add_source").on("click",function() {
             layer.open({
                 type: 2,
@@ -92,7 +70,6 @@ var $;
                 content: '/api/add',
                 area:['500px','250px'],
                 cancel:function(){
-                    alert('yes');
                     window.location.reload();
                     layer.close(index);
                 }
@@ -104,14 +81,13 @@ var $;
             var obj = $(this);
             var api_name = '<i class="fa fa-link"></i>&nbsp;&nbsp;'+obj.attr("data-name");
             $(".api_info .title").html(api_name);
+            $(".api_info .title").attr("data-id",obj.attr("data-id"));
             $("#api-main").load("/api/show?id="+obj.attr("data-id"));
             obj.parent().addClass("select").siblings().removeClass("select");
             obj.parent().find("span").show();
             obj.parent().siblings().find("span").hide();
 
             if(obj.attr("data-type")=="delete"){
-                
-
                 var id = obj.attr("data-id");
                 var name = obj.attr("data-name");
                 layer.confirm('真的删除【'+name+'】么', function(){
@@ -154,8 +130,6 @@ var $;
                     area:['800px','450px'],
                 }); 
             }
-
-
         })
 
         // $(".api_list ul li").on('mouseover',function(){
@@ -165,7 +139,12 @@ var $;
         // })
 
         form.on("select",function(data){
-            alert('yes');
+            window.location.href='/api/list?gid='+data.value
+        })
+
+        $("#refresh_api").on("click",function(){
+            var id = $(".api_info .title").attr("data-id");
+            $("#api-main").load("/api/show?id="+id);
         })
 
 

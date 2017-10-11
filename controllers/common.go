@@ -10,7 +10,6 @@ package controllers
 import (
 	"PPGo_ApiAdmin/libs"
 	"PPGo_ApiAdmin/models"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -51,8 +50,6 @@ func (self *BaseController) Prepare() {
 	self.auth()
 	// }
 
-	fmt.Println(self.userId)
-	fmt.Println("========")
 	self.Data["loginUserId"] = self.userId
 	self.Data["loginUserName"] = self.userName
 }
@@ -74,17 +71,13 @@ func (self *BaseController) auth() {
 				self.user = user
 			}
 			self.AdminAuth()
-			//API接口
-			// noAuth := "ajaxsave/ajaxdel/table/loginin/loginout/index/getnodes/start"
-			fmt.Println(self.controllerName + "/" + self.actionName)
-			fmt.Println(self.allowUrl)
-			// fmt.Println(noAuth)
 
 			isHasAuth := strings.Contains(self.allowUrl, self.controllerName+"/"+self.actionName)
-			noAuth := "ajaxsave/ajaxdel/table/loginin/loginout/getnodes/start/show"
+			noAuth := "ajaxsave/ajaxdel/table/loginin/loginout/getnodes/start/show/ajaxapisave"
 			isNoAuth := strings.Contains(noAuth, self.actionName)
 			if isHasAuth == false && isNoAuth == false {
 				self.Ctx.WriteString("没有权限")
+				self.ajaxMsg("没有权限", MSG_ERR)
 				return
 			}
 		}

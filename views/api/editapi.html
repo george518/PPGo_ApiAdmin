@@ -1,0 +1,196 @@
+<style>
+    .nav-title{
+        display: none;
+    }
+    .my_table{
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    .my_table td, .my_table th, .my_table-header, .my_table-tool, .my_table-view, .my_table[lay-skin=row], .my_table[lay-skin=line] {
+            border: 1px solid #e2e2e2;
+    }
+    .my_table td, .my_table th {
+        position: relative;
+        padding: 4px 4px;
+        min-height: 30px;
+        line-height: 30px;
+        font-size: 14px;
+    }
+    .my_table th{
+        background: #efefef;
+        color: #333;
+    }
+    td{
+        padding:0px;
+    }
+    .biginput{
+        border: none;
+        height: 100%;
+        width: 100%;
+    }
+</style>
+<div class="layui-layout layui-layout-admin" style="padding-left: 40px;margin-top: 20px;width: 700px;">
+<form class="layui-form" action="" method="post" >
+    <input type="hidden" name="source_id" value="{{.Detail.SourceId}}">
+    <input type="hidden" name="id" value="{{.Detail.Id}}">
+    <div class="layui-form-item">
+        <label class="layui-form-label">接口名称</label>
+        <div class="layui-input-block ">
+            <input type="text" name="api_name" id="api_name" lay-verify="required" autocomplete="off" placeholder="接口名称：获取用户列表" class="layui-input" value="{{.Detail.ApiName}}">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">接口地址</label>
+        <div class="layui-input-block">
+            <input type="text" name="api_url" id="api_url" lay-verify="required" autocomplete="off" placeholder="/User" class="layui-input" value="{{.Detail.ApiUrl}}">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">请求方式</label>
+        <div class="layui-input-block">
+            <input type="radio" name="method" value="1" title="GET"  {{if eq .Detail.Method 1}}checked{{end}}>
+            <input type="radio" name="method" value="2" title="POST"  {{if eq .Detail.Method 2}}checked{{end}}>
+            <input type="radio" name="method" value="3" title="PUT"  {{if eq .Detail.Method 3}}checked{{end}}>
+            <input type="radio" name="method" value="4" title="PATCH"  {{if eq .Detail.Method 4}}checked{{end}}>
+             <input type="radio" name="method" value="5" title="DELETE"  {{if eq .Detail.Method 5}}checked{{end}}>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">请求协议</label>
+        <div class="layui-input-block">
+            <input type="radio" name="protocol_type" value="2" title="HTTPS" {{if eq .Detail.ProtocolType 2}}checked{{end}}>
+            <input type="radio" name="protocol_type" value="1" title="HTTP" {{if eq .Detail.ProtocolType 1}}checked{{end}}>
+            <input type="radio" name="protocol_type" value="0" title="均支持" {{if eq .Detail.ProtocolType 0}}checked{{end}} >
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">接口状态</label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="0" title="暂停使用" {{if eq .Detail.Status 0}}checked{{end}}>
+            <input type="radio" name="status" value="1" title="正在开发" {{if eq .Detail.Status 1}}checked{{end}}>
+            <input type="radio" name="status" value="2" title="正在审核" {{if eq .Detail.Status 2}}checked{{end}}>
+            <input type="radio" name="status" value="3" title="审核通过" {{if eq .Detail.Status 3}}checked{{end}}>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">请求示例</label>
+        <div class="layui-input-block" >
+            <textarea name="example" id="example" placeholder="http://apis.example.com/common/car/key?productKey=您的产品密钥&productKey=参数1" class="layui-textarea">{{.Detail.Example}}</textarea>
+        </div>
+    </div>
+
+
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">请求参数</label>
+        <div class="layui-input-block" style="">
+            <table class="my_table">
+                <colgroup>
+                <col width="100">
+                <col width="100">
+                <col width="100">
+                <col width="100">
+                <col width="100">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>属性</th>
+                        <th>类型</th>
+                        <th>默认值</th>
+                        <th>必填</th>
+                        <th>说明</th>
+                        <th>操作</th>
+                    </tr> 
+                </thead>
+                <tbody>
+                {{range $i,$e:=.Params}}
+                <tr>
+                    <td><input type="text" name="attr_{{$i}}_key" value="{{$e.ApiKey}}" class="biginput"></td>
+                    <td><input type="text" name="attr_{{$i}}_type" value="{{$e.ApiType}}" class="biginput"></td>
+                    <td><input type="text" name="attr_{{$i}}_value" value="{{$e.ApiValue}}" class="biginput"></td>
+                    <td><input type="text" name="attr_{{$i}}_isnull" value="{{$e.IsNull}}" class="biginput"></td>
+                    <td><input type="text" name="attr_{{$i}}_detail" value="{{$e.ApiDetail}}" class="biginput"></td>
+                    <td><a href="javascript:;" class="delete_tr"><i class="layui-icon"> &#xe640; </i></a></td></tr>
+                </tr>
+                {{end}}
+                </tbody>
+            </table>
+
+            <div class="layui-btn-group">
+                <a href="javascript:;" class="layui-btn layui-btn-small" id="add_tr"><i class="layui-icon">&#xe654;</i></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">返回参数</label>
+        <div class="layui-input-block" >
+            <textarea name="result" id="result" placeholder="" class="layui-textarea">{{.Detail.Result}}</textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block" >
+            <textarea name="detail" id="detail" placeholder="" class="layui-textarea">{{.Detail.Detail}}</textarea>
+        </div>
+    </div>
+    
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit="" lay-filter="sub">保存</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+</div>
+<script>
+var $;
+var attr_index = {{.ParamsCount}};
+    layui.config({
+            base : "js/"
+    }).use(['form','element','table','layer','jquery'],function(){
+        var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+        var $ = layui.jquery;
+        var table = layui.table;
+        
+        form.on('submit(sub)', function(data){
+            var form_data = data.field;
+            $.post('{{urlfor "ApiController.AjaxApiSave"}}', form_data, function (out) {
+                if (out.status == 0) {
+                    layer.msg("操作成功",{icon: 1},function () {
+                        window.parent.layer.closeAll();
+                        window.parent.layui.$("#refresh_api").click();
+                    })
+                } else {
+                    layer.msg(out.message)
+                }
+            }, "json");
+            return false;
+        });
+
+        //属性表格编辑
+        //新增
+        $("#add_tr").on('click',function(){
+            var trtd = '<tr><td><input type="text" name="attr_'+attr_index+'_key" class="biginput"></td><td><input type="text" name="attr_'+attr_index+'_type" class="biginput"></td><td><input type="text" name="attr_'+attr_index+'_value" class="biginput"></td><td><input type="text" name="attr_'+attr_index+'_isnull" class="biginput"></td><td><input type="text" name="attr_'+attr_index+'_detail" class="biginput"></td><td><a href="javascript:;" class="delete_tr"><i class="layui-icon"> &#xe640; </i></a></td></tr>';
+            $("tbody").append(trtd);
+            attr_index++;
+        });
+        //删除
+        $("tbody").on("click","tr td .delete_tr",function(){
+            var tds = $(this)
+            tds.parent().parent().remove();
+            return false;
+        });
+
+      
+      //但是，如果你的HTML是动态生成的，自动渲染就会失效
+      //因此你需要在相应的地方，执行下述方法来手动渲染，跟这类似的还有 element.init();
+      form.render();
+}); 
+</script>
