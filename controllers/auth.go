@@ -9,10 +9,11 @@
 package controllers
 
 import (
-	"PPGo_ApiAdmin/models"
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/george518/PPGo_ApiAdmin/models"
 )
 
 type AuthController struct {

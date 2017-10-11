@@ -8,14 +8,14 @@
 package controllers
 
 import (
-	"PPGo_ApiAdmin/libs"
-	"PPGo_ApiAdmin/models"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/astaxie/beego"
+	"github.com/george518/PPGo_ApiAdmin/libs"
+	"github.com/george518/PPGo_ApiAdmin/models"
 )
 
 type AdminController struct {

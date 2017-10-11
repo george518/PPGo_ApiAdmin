@@ -8,10 +8,11 @@
 package controllers
 
 import (
-	"PPGo_ApiAdmin/libs"
-	"PPGo_ApiAdmin/models"
 	"strings"
 	"time"
+
+	"github.com/george518/PPGo_ApiAdmin/libs"
+	"github.com/george518/PPGo_ApiAdmin/models"
 )
 
 type UserController struct {

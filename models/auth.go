@@ -8,8 +8,9 @@
 package models
 
 import (
-	"github.com/astaxie/beego/orm"
 	"fmt"
+
+	"github.com/astaxie/beego/orm"
 )
 
 type Auth struct {
@@ -48,25 +49,25 @@ func AuthGetList(page, pageSize int, filters ...interface{}) ([]*Auth, int64) {
 	return list, total
 }
 
-func AuthGetListByIds(authIds string, userId int)([]*Auth, error)  {
+func AuthGetListByIds(authIds string, userId int) ([]*Auth, error) {
 
 	list1 := make([]*Auth, 0)
 	var list []orm.Params
 	//list:=[]orm.Params
 	var err error
-	if(userId==1){
+	if userId == 1 {
 		//超级管理员
-		_, err = orm.NewOrm().Raw("select id,auth_name,auth_url,pid,icon,is_show from pp_uc_auth where status=? order by pid asc,sort asc",1).Values(&list)
-	}else{
+		_, err = orm.NewOrm().Raw("select id,auth_name,auth_url,pid,icon,is_show from pp_uc_auth where status=? order by pid asc,sort asc", 1).Values(&list)
+	} else {
 		_, err = orm.NewOrm().Raw("select id,auth_name,auth_url,pid,icon,is_show from pp_uc_auth where status=1 and id in("+authIds+") order by pid asc,sort asc", authIds).Values(&list)
 	}
 
-	for k,v := range list{
-		fmt.Println(k,v)
+	for k, v := range list {
+		fmt.Println(k, v)
 	}
 
 	fmt.Println(list)
-	return list1,err
+	return list1, err
 }
 
 func AuthAdd(auth *Auth) (int64, error) {

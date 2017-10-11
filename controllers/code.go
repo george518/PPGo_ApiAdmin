@@ -8,12 +8,12 @@
 package controllers
 
 import (
-	"PPGo_ApiAdmin/models"
 	"fmt"
 	"strings"
 	"time"
 
 	"github.com/astaxie/beego"
+	"github.com/george518/PPGo_ApiAdmin/models"
 )
 
 type CodeController struct {
