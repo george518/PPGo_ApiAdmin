@@ -69,8 +69,8 @@ func (self *BaseController) auth() {
 				self.loginName = user.LoginName
 				self.userName = user.RealName
 				self.user = user
+				self.AdminAuth()
 			}
-			self.AdminAuth()
 
 			isHasAuth := strings.Contains(self.allowUrl, self.controllerName+"/"+self.actionName)
 			noAuth := "ajaxsave/ajaxdel/table/loginin/loginout/getnodes/start/show/ajaxapisave"
