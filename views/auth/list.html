@@ -37,7 +37,7 @@
                     </div>
                     <div class="layui-form-mid layui-word-aux">
 
-                        <button id="menuBtn" type="button" class="layui-btn layui-btn-mini layui-btn-normal" >选择顶级分类</button>
+                        <button id="menuBtn" type="button" class="layui-btn layui-btn-xs layui-btn-normal" >选择顶级分类</button>
                     </div>
                 </div>
                 
@@ -192,7 +192,8 @@ var $,form;
                         $("form[name=form]").find("input[name=sort]").val(data.data.sort);
                         var is_show = data.data.is_show
                         $("form[name=form]").find("input[type=radio][value="+is_show+"]").attr("checked", true);
-                        //form.render();
+                        $("form[name=form]").find("input[type=radio][value="+is_show+"]").click();
+                        form.render();
                     }
                 }
             }); 

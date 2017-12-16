@@ -146,19 +146,24 @@ func (self *AdminController) AjaxSave() {
 func (self *AdminController) AjaxDel() {
 
 	Admin_id, _ := self.GetInt("id")
+	status := strings.TrimSpace(self.GetString("status"))
+	if Admin_id == 1 {
+		self.ajaxMsg("超级管理员不允许操作", MSG_ERR)
+	}
+
+	Admin_status := 0
+	if status == "enable" {
+		Admin_status = 1
+	}
 	Admin, _ := models.AdminGetById(Admin_id)
 	Admin.UpdateTime = time.Now().Unix()
-	Admin.Status = 0
+	Admin.Status = Admin_status
 	Admin.Id = Admin_id
-
-	if Admin_id == 1 {
-		self.ajaxMsg("超级管理员不允许删除", MSG_ERR)
-	}
 
 	if err := Admin.Update(); err != nil {
 		self.ajaxMsg(err.Error(), MSG_ERR)
 	}
-	self.ajaxMsg("", MSG_OK)
+	self.ajaxMsg("操作成功", MSG_OK)
 }
 
 func (self *AdminController) Table() {
@@ -172,10 +177,14 @@ func (self *AdminController) Table() {
 		limit = 30
 	}
 
+	StatusText := make(map[int]string)
+	StatusText[0] = "<font color='red'>禁用</font>"
+	StatusText[1] = "正常"
+
 	self.pageSize = limit
 	//查询条件
 	filters := make([]interface{}, 0)
-	filters = append(filters, "status", 1)
+	// filters = append(filters, "status", 1)
 	result, count := models.AdminGetList(page, self.pageSize, filters...)
 	list := make([]map[string]interface{}, len(result))
 	for k, v := range result {
@@ -188,6 +197,8 @@ func (self *AdminController) Table() {
 		row["role_ids"] = v.RoleIds
 		row["create_time"] = beego.Date(time.Unix(v.CreateTime, 0), "Y-m-d H:i:s")
 		row["update_time"] = beego.Date(time.Unix(v.UpdateTime, 0), "Y-m-d H:i:s")
+		row["status"] = v.Status
+		row["status_text"] = StatusText[v.Status]
 		list[k] = row
 	}
 	self.ajaxList("成功", MSG_OK, count, list)
