@@ -8,6 +8,8 @@
 package models
 
 import (
+	"strconv"
+
 	"github.com/astaxie/beego/orm"
 )
 
@@ -49,16 +51,26 @@ func AdminGetByName(loginName string) (*Admin, error) {
 func AdminGetList(page, pageSize int, filters ...interface{}) ([]*Admin, int64) {
 	offset := (page - 1) * pageSize
 	list := make([]*Admin, 0)
-	query := orm.NewOrm().QueryTable(TableName("uc_admin"))
+	query := orm.NewOrm()
+
+	realName := ""
+	sql := ""
+	var total int64
 	if len(filters) > 0 {
 		l := len(filters)
 		for k := 0; k < l; k += 2 {
-			query = query.Filter(filters[k].(string), filters[k+1])
+			if filters[k].(string) == "realName" {
+				realName = filters[k+1].(string)
+			}
 		}
 	}
-	total, _ := query.Count()
-	query.OrderBy("-id").Limit(pageSize, offset).All(&list)
-
+	if realName == "" {
+		sql = "SELECT * FROM pp_uc_admin ORDER BY id DESC LIMIT ?,?"
+		total, _ = query.Raw(sql, strconv.Itoa(offset), strconv.Itoa(pageSize)).QueryRows(&list)
+	} else {
+		sql = "SELECT * FROM pp_uc_admin WHERE real_name like ?  ORDER BY id DESC LIMIT ?,?"
+		total, _ = query.Raw(sql, "%"+realName+"%", strconv.Itoa(offset), strconv.Itoa(pageSize)).QueryRows(&list)
+	}
 	return list, total
 }
 

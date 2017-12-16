@@ -9,30 +9,29 @@
     <link rel="stylesheet" href="/static/zTree3/css/zTreeStyle/zTreeStyle.css" type="text/css">
     {{end}}
     <link rel="stylesheet" href="/static/layui/css/layui.css?q=12">
-    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/main.css?r=1212">
     <script src="/static/layui/layui.js?s=10"></script>
     <script src="/static/js/main.js?s=2124"></script>
 </head>
 <div class="layui-layout layui-layout-admin" style="padding-left: 20px;">
-    <div class="layui-btn-group demoTable" style="margin-top: 10px; ">
-        <a class="layui-btn" data-type="tabAdd" href="/admin/add">新增</a>   
-    </div>               
-    <!-- <table class="layui-table" lay-data="{width: 'full-10', height: 'full-120', url:'/admin/table', page:true, id:'idTest'}" lay-filter="demo">
-        <thead>
-            <tr>
-                <th lay-data="{field:'id', width:80, fixed: true}">ID</th>
-                <th lay-data="{field:'login_name', width:200}">登录账户</th>
-                <th lay-data="{field:'real_name', width:150}">真实姓名</th>
-                <th lay-data="{field:'phone', width:200}">手机号码</th>
-                <th lay-data="{field:'email', width:200}">电子邮箱</th>
-                <th lay-data="{fixed: 'right', width:200, align:'center', toolbar: '#barDemo'}"></th>
-            </tr>
-        </thead>
-    </table> -->
+    <div class="layui-row" style="margin-top: 20px;">
+        <div class="layui-col-xs6">
+            <a class="layui-btn" data-type="tabAdd" href="/admin/add">新增</a>  
+        </div>
+        <div class="layui-col-xs6 search_text">
+            <form class="layui-form" action="" onsubmit="javascript:return false;">
+                <div class="demoTable">
+                    <div class="layui-inline" style="width: 40%">
+                        <input class="layui-input" name="realName" id="realName" autocomplete="off" placeholder="真实姓名" >
+                    </div>
+                    <button class="layui-btn" data-type="reload">查询</button>
+                </div>
+            </form>
+            
+        </div>
+    </div>
 
     <table class="layui-hide" id="table_list" lay-filter="table_filter">
-
-
     </table>
 
     <script type="text/html" id="bar">
@@ -71,15 +70,12 @@
         var $ = layui.$, active = {
             reload: function(){
                 table.reload('listReload', {
-                    // where: {
-                    //     loginName: $('#loginName').val(),
-                    //     realName: $('#realName').val(),
-                    // }
+                    where: {
+                        realName: $('#realName').val(),
+                    }
                 });
             }
         };
-
-
 
         //监听工具条
         table.on('tool(table_filter)', function(obj){

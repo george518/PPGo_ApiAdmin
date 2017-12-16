@@ -177,6 +177,8 @@ func (self *AdminController) Table() {
 		limit = 30
 	}
 
+	realName := strings.TrimSpace(self.GetString("realName"))
+
 	StatusText := make(map[int]string)
 	StatusText[0] = "<font color='red'>禁用</font>"
 	StatusText[1] = "正常"
@@ -184,7 +186,10 @@ func (self *AdminController) Table() {
 	self.pageSize = limit
 	//查询条件
 	filters := make([]interface{}, 0)
-	// filters = append(filters, "status", 1)
+	//
+	if realName != "" {
+		filters = append(filters, "realName", realName)
+	}
 	result, count := models.AdminGetList(page, self.pageSize, filters...)
 	list := make([]map[string]interface{}, len(result))
 	for k, v := range result {
