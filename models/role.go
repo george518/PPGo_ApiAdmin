@@ -8,6 +8,8 @@
 package models
 
 import (
+	"strconv"
+
 	"github.com/astaxie/beego/orm"
 )
 
@@ -29,16 +31,26 @@ func (a *Role) TableName() string {
 func RoleGetList(page, pageSize int, filters ...interface{}) ([]*Role, int64) {
 	offset := (page - 1) * pageSize
 	list := make([]*Role, 0)
-	query := orm.NewOrm().QueryTable(TableName("uc_role"))
+	query := orm.NewOrm()
+
+	roleName := ""
+	sql := ""
+	var total int64
 	if len(filters) > 0 {
 		l := len(filters)
 		for k := 0; k < l; k += 2 {
-			query = query.Filter(filters[k].(string), filters[k+1])
+			if filters[k].(string) == "roleName" {
+				roleName = filters[k+1].(string)
+			}
 		}
 	}
-	total, _ := query.Count()
-	query.OrderBy("-id").Limit(pageSize, offset).All(&list)
-
+	if roleName == "" {
+		sql = "SELECT * FROM pp_uc_role ORDER BY id DESC LIMIT ?,?"
+		total, _ = query.Raw(sql, strconv.Itoa(offset), strconv.Itoa(pageSize)).QueryRows(&list)
+	} else {
+		sql = "SELECT * FROM pp_uc_role WHERE role_name like ?  ORDER BY id DESC LIMIT ?,?"
+		total, _ = query.Raw(sql, "%"+roleName+"%", strconv.Itoa(offset), strconv.Itoa(pageSize)).QueryRows(&list)
+	}
 	return list, total
 }
 
