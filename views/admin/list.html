@@ -28,7 +28,7 @@
 </div>
 <script>
 
-     layui.use(['table','form','element'], function(){
+    layui.use(['table','form','element'], function(){
         var table = layui.table;
         var form = layui.form;
         var element = layui.element;
@@ -105,55 +105,6 @@
             var type = $(this).data('type');
             active[type] ? active[type].call(this) : '';
         });
-
-        //新增管理员
-        $('#addAdmin').on('click', function(){
-            window.location.href="/admin/adminAdd";
-        });
-        form.render();
     });
-
-//     var $;
-//     layui.config({
-//             base : "js/"
-//     }).use(['table','element','layer','jquery'], function(){
-//         var table = layui.table;
-//         var element = layui.element;
-//         $ = layui.jquery
-//     //监听表格复选框选择
-//     table.on('checkbox(demo)', function(obj){
-//         console.log(obj);
-//     });
-
-//     //监听工具条
-//     table.on('tool(demo)', function(obj){
-//         var data = obj.data;
-//         if(obj.event === 'detail'){
-//             //layer.msg('ID：'+ data.id + ' 的查看操作');
-//         } else if(obj.event === 'del'){
-//             if (data.id==1) {
-//                layer.msg('超级管理员不允许删除');
-//                return false;
-//             }
-//             layer.confirm('真的删除【'+data.login_name+'】账号么', function(index){
-//             var jsData = {'id':data.id}
-//             $.post('{{urlfor "AdminController.AjaxDel"}}', jsData, function (out) {
-//                 if (out.status == 0) {
-//                     layer.alert('删除成功了', {icon: 1},function(index){
-//                         layer.close(index);
-//                         window.location.reload();
-//                     });
-//                 } else {
-//                     layer.msg(out.message)
-//                 }
-//             }, "json");
-//             // obj.del();
-//             layer.close(index);
-//         });
-//         } else if(obj.event === 'edit'){
-//             window.location.href="/admin/edit?id="+data.id
-//         }
-//     });
-// });
 
 </script>

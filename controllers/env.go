@@ -53,11 +53,15 @@ func (self *EnvController) Table() {
 	if err != nil {
 		limit = 30
 	}
+	envName := strings.TrimSpace(self.GetString("envName"))
 
 	self.pageSize = limit
 	//查询条件
 	filters := make([]interface{}, 0)
 	filters = append(filters, "status", 1)
+	if envName != "" {
+		filters = append(filters, "envName", envName)
+	}
 	result, count := models.EnvGetList(page, self.pageSize, filters...)
 	list := make([]map[string]interface{}, len(result))
 	for k, v := range result {
