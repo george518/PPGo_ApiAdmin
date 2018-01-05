@@ -34,6 +34,7 @@ func RoleGetList(page, pageSize int, filters ...interface{}) ([]*Role, int64) {
 	query := orm.NewOrm()
 
 	roleName := ""
+	status := 1
 	sql := ""
 	var total int64
 	if len(filters) > 0 {
@@ -42,14 +43,18 @@ func RoleGetList(page, pageSize int, filters ...interface{}) ([]*Role, int64) {
 			if filters[k].(string) == "roleName" {
 				roleName = filters[k+1].(string)
 			}
+
+			if filters[k].(string) == "status" {
+				status = filters[k+1].(int)
+			}
 		}
 	}
 	if roleName == "" {
-		sql = "SELECT * FROM pp_uc_role ORDER BY id DESC LIMIT ?,?"
-		total, _ = query.Raw(sql, strconv.Itoa(offset), strconv.Itoa(pageSize)).QueryRows(&list)
+		sql = "SELECT * FROM pp_uc_role WHERE status=? ORDER BY id DESC LIMIT ?,?"
+		total, _ = query.Raw(sql, status, strconv.Itoa(offset), strconv.Itoa(pageSize)).QueryRows(&list)
 	} else {
-		sql = "SELECT * FROM pp_uc_role WHERE role_name like ?  ORDER BY id DESC LIMIT ?,?"
-		total, _ = query.Raw(sql, "%"+roleName+"%", strconv.Itoa(offset), strconv.Itoa(pageSize)).QueryRows(&list)
+		sql = "SELECT * FROM pp_uc_role WHERE status=? and role_name like ?  ORDER BY id DESC LIMIT ?,?"
+		total, _ = query.Raw(sql, status, "%"+roleName+"%", strconv.Itoa(offset), strconv.Itoa(pageSize)).QueryRows(&list)
 	}
 	return list, total
 }

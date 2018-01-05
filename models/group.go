@@ -8,6 +8,8 @@
 package models
 
 import (
+	"strconv"
+
 	"github.com/astaxie/beego/orm"
 )
 
@@ -42,16 +44,31 @@ func GroupGetByName(groupName string) (*Group, error) {
 func GroupGetList(page, pageSize int, filters ...interface{}) ([]*Group, int64) {
 	offset := (page - 1) * pageSize
 	list := make([]*Group, 0)
-	query := orm.NewOrm().QueryTable(TableName("set_group"))
+	query := orm.NewOrm()
+
+	groupName := ""
+	status := 1
+	sql := ""
+	var total int64
 	if len(filters) > 0 {
 		l := len(filters)
 		for k := 0; k < l; k += 2 {
-			query = query.Filter(filters[k].(string), filters[k+1])
+			if filters[k].(string) == "groupName" {
+				groupName = filters[k+1].(string)
+			}
+
+			if filters[k].(string) == "status" {
+				status = filters[k+1].(int)
+			}
 		}
 	}
-	total, _ := query.Count()
-	query.OrderBy("-id").Limit(pageSize, offset).All(&list)
-
+	if groupName == "" {
+		sql = "SELECT * FROM pp_set_group WHERE status=? ORDER BY id DESC LIMIT ?,?"
+		total, _ = query.Raw(sql, status, strconv.Itoa(offset), strconv.Itoa(pageSize)).QueryRows(&list)
+	} else {
+		sql = "SELECT * FROM pp_set_group WHERE status=? and group_name like ?  ORDER BY id DESC LIMIT ?,?"
+		total, _ = query.Raw(sql, status, "%"+groupName+"%", strconv.Itoa(offset), strconv.Itoa(pageSize)).QueryRows(&list)
+	}
 	return list, total
 }
 

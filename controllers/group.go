@@ -53,10 +53,16 @@ func (self *GroupController) Table() {
 		limit = 30
 	}
 
+	groupName := strings.TrimSpace(self.GetString("groupName"))
+
 	self.pageSize = limit
 	//查询条件
 	filters := make([]interface{}, 0)
 	filters = append(filters, "status", 1)
+	if groupName != "" {
+		filters = append(filters, "groupName", groupName)
+	}
+
 	result, count := models.GroupGetList(page, self.pageSize, filters...)
 	list := make([]map[string]interface{}, len(result))
 	for k, v := range result {

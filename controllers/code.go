@@ -54,11 +54,15 @@ func (self *CodeController) Table() {
 	if err != nil {
 		limit = 30
 	}
+	code := strings.TrimSpace(self.GetString("code"))
 
 	self.pageSize = limit
 	//查询条件
 	filters := make([]interface{}, 0)
 	filters = append(filters, "status", 1)
+	if code != "" {
+		filters = append(filters, "code", code)
+	}
 	result, count := models.CodeGetList(page, self.pageSize, filters...)
 	list := make([]map[string]interface{}, len(result))
 	for k, v := range result {

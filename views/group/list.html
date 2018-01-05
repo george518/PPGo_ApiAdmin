@@ -1,38 +1,63 @@
 <div class="layui-layout layui-layout-admin" style="padding-left: 20px;">
-    <div class="layui-btn-group demoTable" style="margin-top: 10px; ">
-        <a class="layui-btn" data-type="tabAdd" href="/group/add">新增</a>   
-    </div>               
-    <table class="layui-table" lay-data="{width: 'full-10', height: 'full-105', url:'/group/table', page:true, id:'idTest'}" lay-filter="demo">
-        <thead>
-            <tr>
-                
-                <th lay-data="{field:'id', width:80, fixed: true}">ID</th>
-                <th lay-data="{field:'group_name', width:200}">角色名称</th>
-                <th lay-data="{field:'detail', width:250}">备注</th>
-                <th lay-data="{field:'create_time', width:150}">创建时间</th>
-                <th lay-data="{field:'update_time', width:150}">修改时间</th>
-                <th lay-data="{fixed: 'right', width:200, align:'center', toolbar: '#barDemo'}"></th>
-            </tr>
-        </thead>
+    <div class="layui-row" style="margin-top: 20px;">
+        <div class="layui-col-xs6">
+            <a class="layui-btn" data-type="tabAdd" href="/group/add">新增</a>  
+        </div>
+        <div class="layui-col-xs6 search_text">
+            <form class="layui-form" action="" onsubmit="javascript:return false;">
+                <div class="demoTable">
+                    <div class="layui-inline" style="width: 40%">
+                        <input class="layui-input" name="groupName" id="groupName" autocomplete="off" placeholder="分组名称" >
+                    </div>
+                    <button class="layui-btn" data-type="reload">查询</button>
+                </div>
+            </form>
+            
+        </div>
+    </div>
+    <table class="layui-hide" id="table_list" lay-filter="table_filter">
     </table>
-
-    <script type="text/html" id="barDemo">
-       <!--  <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a> -->
+    <script type="text/html" id="bar">
         <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
     </script>
 </div>
 <script>
-    var $;
-    layui.config({
-            base : "js/"
-    }).use(['table','element','layer','jquery'], function(){
+    layui.use(['table','form','element'], function(){
         var table = layui.table;
+        var form = layui.form;
         var element = layui.element;
-        $ = layui.jquery
+
+        //方法级渲染
+        table.render({
+            elem: '#table_list'
+            ,url: '/group/table'
+            ,cols: [[
+                // {checkbox: true, fixed: true},
+                {field:'id', title: 'ID', align:'center',sort: true, width:150}
+                ,{field:'group_name',title: '分组名称'}
+                ,{field:'detail', title: '备注'}
+                ,{field:'create_time', title: '创建时间'}
+                ,{field:'update_time', title: '修改时间'}
+                ,{fixed: 'right', width:160, align:'center', toolbar: '#bar'}
+            ]]
+            ,id: 'listReload'
+            ,page: true
+            ,height: "full-130"
+        });
+
+        var $ = layui.$, active = {
+            reload: function(){
+                table.reload('listReload', {
+                    where: {
+                        groupName: $('#groupName').val(),
+                    }
+                });
+            }
+        };
 
     //监听工具条
-    table.on('tool(demo)', function(obj){
+    table.on('tool(table_filter)', function(obj){
         var data = obj.data;
         if(obj.event === 'detail'){
             //layer.msg('ID：'+ data.id + ' 的查看操作');
@@ -55,6 +80,11 @@
         } else if(obj.event === 'edit'){
             window.location.href="/group/edit?id="+data.id
         }
+    });
+
+    $('.demoTable .layui-btn').on('click', function(){
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
     });
 });
 
