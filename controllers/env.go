@@ -60,7 +60,7 @@ func (self *EnvController) Table() {
 	filters := make([]interface{}, 0)
 	filters = append(filters, "status", 1)
 	if envName != "" {
-		filters = append(filters, "envName", envName)
+		filters = append(filters, "env_name__icontains", envName)
 	}
 	result, count := models.EnvGetList(page, self.pageSize, filters...)
 	list := make([]map[string]interface{}, len(result))

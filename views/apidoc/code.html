@@ -1,0 +1,26 @@
+<h1 class="site-h1">状态码说明</h1>
+
+<table class="layui-table">
+  <colgroup>
+    <col width="150">
+    <col>
+    <col>
+  </colgroup>
+  <thead>
+    <tr>
+      <th>状态码</th>
+      <th>说明</th>
+      <th>备注</th>
+    </tr> 
+  </thead>
+  <tbody>
+    {{range $i, $e := .code}}
+    <tr>
+        <td>{{$e.Code}}</td>
+        <td>{{$e.Desc}}</td>
+        <td>{{$e.Detail}}</td>
+    </tr>
+    {{end}}
+
+  </tbody>
+</table>

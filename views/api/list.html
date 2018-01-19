@@ -1,101 +1,172 @@
-<div class="layui-container api_contrainer">  
-    <div class="layui-row">
-        <div class="layui-col-md3 api_side mt10">
-            <form class="layui-form" action="" name="select_group">
-                <div class="layui-row">
-                    <div class="layui-inline layui-col-md6">
-                        <div class="layui-input-inline">
-                            <select name="group_id" lay-verify="required"  lay-search="" style="width: 100%">
-                                <option value="">请选择分组</option>
-                                {{range $index,$elem := .Groups}}
-                                <option value="{{$elem.id}}" {{if eq $.Gid $elem.id}} selected{{end}} >{{$elem.group_name}}</option>
-                                {{end}}
-                            </select>
-                        </div>
+<div class="layui-layout layui-layout-admin" style="padding-left: 20px;">
+    <div class="layui-row" style="margin-top: 20px;">
+        <div class="layui-col-xs6">
+            <div class="layui-btn-group">
+              <button class="layui-btn" id="add_api">增加</button>
+              <button class="layui-btn" id="add_audit">提交审核</button>
+              <button class="layui-btn" id="audit">审核通过</button>
+            </div>
+            <!-- <a class="layui-btn" data-type="tabAdd" href="/api/add">新增</a>  -->
+            <!-- <a href="javascript:;" id="add_api" class="layui-btn"> 新增接口 </a>  
+            <a href="javascript:;" id="add_audit" class="layui-btn layui-btn-primary"> 提交审核 </a> -->
+        </div>
+        <div class="layui-col-xs6 search_text">
+            <form class="layui-form" action="" onsubmit="javascript:return false;">
+                <div class="demoTable">
+                    <div class="layui-inline" style="width: 40%">
+                        <input class="layui-input" name="apiName" id="apiName" autocomplete="off" placeholder="接口名称" >
                     </div>
-                    <div class="layui-col-md5 ml8">
-                        <a href="javascript:;" id="add_source" class="layui-btn"> <i class="fa fa-plus-circle"></i>新增资源 </a>
+                    <div class="layui-inline" style="width: 20%;text-align: left;">
+                        <select name="status" id="status" lay-verify="required"  lay-search="">
+                            <option value="-1">全部状态</option>
+                            {{range $index,$elem := .auditStatus}}
+                            <option value="{{$index}}"> {{$elem}}</option>
+                            {{end}}
+                        </select>
                     </div>
+                    <button class="layui-btn" data-type="reload" id="reload">查询</button>
                 </div>
             </form>
-
-            <div class="api_list">
-                <ul>
-                    {{range $i,$e:=.Source}}
-                    <li>
-                        <a href="javascript:;" data-id="{{$e.id}}" data-name="{{$e.source_name}}" {{if eq $i 0}} class="select"{{end}}>
-                            &nbsp;<i class="fa fa-angle-right"></i> &nbsp;&nbsp;{{$e.source_name}}
-                        </a>
-                        <span>
-                            <a href="javascript:;" title="删除" data-type="delete" data-id="{{$e.id}}" data-name="{{$e.source_name}}" class="red"><i class="layui-icon">&#xe640;</i></a>
-                            <a href="javascript:;" title="编辑" data-type="edit" data-id="{{$e.id}}" data-name="{{$e.source_name}}"><i class="layui-icon">&#xe642;</i></a>
-                            <a href="javascript:;" title="添加" data-type="add" data-id="{{$e.id}}" data-name="{{$e.source_name}}"><i class="layui-icon">&#xe654;</i></a>
-                            
-                        </span>
-                    </li>
-                    {{end}}
-                </ul>
-            </div>
-        </div>
-        <!-- 右侧内容 -->
-        <div class="layui-col-md9 api_content">
-            <div class="api_info">
-               <div class="title" id="data-id" data-id="1"><i class="fa fa-link"></i>&nbsp;&nbsp;接口资源名称</div>
-               <div class="tag">
-                    <a href="javascript:;" id="refresh_api"><i class="fa fa-refresh" aria-hidden="true"></i></a>
-               </div>
-            </div>
-            <div class="api-main" id="api-main">
-                
-                
-
-            </div>
         </div>
     </div>
-</div>
 
+    <table class="layui-hide" id="table_list" lay-filter="table_filter">
+    </table>
+
+    <script type="text/html" id="bar">
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">详细</a>
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="audit">审核</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">启|停</a>
+
+    </script>
+</div>
 <script>
-var $;
-    layui.config({
-            base : "js/"
-    }).use(['form','element','layer','jquery'],function(){
-        var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
-        var $ = layui.jquery;
-        $("#add_source").on("click",function() {
-            layer.open({
-                type: 2,
-                shade: 0.3,
-                id:1,
-                title:"新增资源",
-                content: '/api/add',
-                area:['500px','250px'],
-                cancel:function(){
-                    window.location.reload();
-                    layer.close(index);
-                }
-            }); 
+
+    layui.use(['table','form','element'], function(){
+        var table = layui.table;
+        var form = layui.form;
+        var element = layui.element;
+
+        //方法级渲染
+        table.render({
+            elem: '#table_list'
+            ,url: '/api/table'
+            ,cols: [[
+                {checkbox: true, fixed: true},
+                {field:'id', title: 'ID', align:'center',sort: true, width:50}
+                ,{field:'api_name',title: '接口名称'}
+                ,{field:'api_url',title: '接口地址'}
+                ,{field:'method',title: '请求方式'}
+                ,{field:'source_name',title: '所属资源'}
+                ,{field:'status_text',title: '接口状态'}
+                ,{field:'create_time', title: '创建时间'}
+                ,{field:'update_time', title: '修改时间'}
+                ,{fixed: 'right', width:260, align:'center', toolbar: '#bar'}
+            ]]
+            ,id: 'listReload'
+            ,page: true
+            ,height: "full-130"
+        });
+
+        var $ = layui.$, active = {
+            reload: function(){
+                table.reload('listReload', {
+                    where: {
+                        apiName: $('#apiName').val(),
+                        status:$("#status").val()
+                    }
+                });
+            }
+        };
+
+        $("#add_api").on("click",function() {
+            window.location.href="/api/add"
         })
 
-        //资源选中事件
-        $(".api_list ul li a").on('click',function(){
-            var obj = $(this);
-            var api_name = '<i class="fa fa-link"></i>&nbsp;&nbsp;'+obj.attr("data-name");
-            $(".api_info .title").html(api_name);
-            $(".api_info .title").attr("data-id",obj.attr("data-id"));
-            $("#api-main").load("/api/show?id="+obj.attr("data-id"));
-            obj.parent().addClass("select").siblings().removeClass("select");
-            obj.parent().find("span").show();
-            obj.parent().siblings().find("span").hide();
+        //提交审核
+        $("#add_audit").on("click",function() {
+            var checkStatus = table.checkStatus('listReload');
+            var ids = ""; 
+            $.each(checkStatus["data"],function(k,v){
+                if (v.status==1) {
+                    ids += v.id+",";
+                }
+            })
 
-            if(obj.attr("data-type")=="delete"){
-                var id = obj.attr("data-id");
-                var name = obj.attr("data-name");
-                layer.confirm('真的删除【'+name+'】么', function(){
-                    var del_data = {"id":id}
+            ids = (ids.substring(ids.length-1)==',')?ids.substring(0,ids.length-1):ids;
+
+            if (!ids) {
+                layer.msg("请选择状态为正在开发的数据")
+                return false;
+            }
+
+            layer.confirm("确定要选中的接口提交审核吗？", function(){
+                var add_audit_data = {"ids":ids,"status":1}
+                $.post('{{urlfor "ApiController.AjaxChangeStatus"}}', add_audit_data, function (out) {
+                    if (out.status == 0) {
+                        layer.msg("操作成功",{icon: 1},function () {
+                            $("#reload").click();
+                        })
+                    } else {
+                        layer.msg(out.message)
+                    }
+                }, "json");        
+                return false;
+            });       
+        })
+
+        //批量审核
+        $("#audit").on("click",function() {
+            var checkStatus = table.checkStatus('listReload');
+            var ids = ""; 
+            $.each(checkStatus["data"],function(k,v){
+                if (v.status==2) {
+                    ids += v.id+",";
+                }
+            })
+
+            ids = (ids.substring(ids.length-1)==',')?ids.substring(0,ids.length-1):ids;
+
+            if (!ids) {
+                layer.msg("请选择状态为正在审核的数据")
+                return false;
+            }
+
+            layer.confirm("确定要选中的接口审核通过吗？", function(){
+                var add_audit_data = {"ids":ids,"status":3}
+                $.post('{{urlfor "ApiController.AjaxChangeStatus"}}', add_audit_data, function (out) {
+                    if (out.status == 0) {
+                        layer.msg("操作成功",{icon: 1},function () {
+                            $("#reload").click();
+                        })
+                    } else {
+                        layer.msg(out.message)
+                    }
+                }, "json");        
+                return false;
+            });       
+        })
+
+        //监听工具条
+        table.on('tool(table_filter)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'edit'){
+                window.location.href="/api/edit?id="+data.id
+            } else if(obj.event === 'del'){
+                var msg = "";
+                if(data.status==0){
+                    msg = '真的启用【'+data.api_name+'】么';
+                }else{
+                    msg = '真的停用【'+data.api_name+'】么';
+                }
+
+                layer.confirm(msg, function(){
+                    var del_data = {"id":data.id}
                     $.post('{{urlfor "ApiController.AjaxDel"}}', del_data, function (out) {
                         if (out.status == 0) {
                             layer.msg("操作成功",{icon: 1},function () {
-                                window.location.href='{{urlfor "ApiController.List"}}'
+                                $("#reload").click();
                             })
                         } else {
                             layer.msg(out.message)
@@ -104,71 +175,20 @@ var $;
                     return false;
                 });
                 return false;
-
+                
+            }else if(obj.event === 'detail'){
+                window.location.href="/api/detail?id="+data.id
+            }else if(obj.event === 'audit'){
+                window.location.href="/api/audit?id="+data.id
+            }else{
+                layer.msg('操作不存在');
             }
-
-            if(obj.attr("data-type")=="edit"){
-                var id = obj.attr("data-id");
-                layer.open({
-                    type: 2,
-                    shade: 0.3,
-                    id:1,
-                    title:"编辑-"+obj.attr("data-name"),
-                    content: '/api/edit?id='+id,
-                    area:['500px','250px'],
-                }); 
-            }
-
-            if(obj.attr("data-type")=="add"){
-                var id = obj.attr("data-id");
-                layer.open({
-                    type: 2,
-                    shade: 0.3,
-                    id:1,
-                    title:"添加接口-"+obj.attr("data-name"),
-                    content: '/api/addapi?sid='+id,
-                    area:['800px','450px'],
-                }); 
-            }
-        })
-
-        // $(".api_list ul li").on('mouseover',function(){
-        //     var obj = $(this)
-        //     $(this).addClass("select").siblings().removeClass("select");
-        //     obj.find("span").show();
-        // })
-
-        form.on("select",function(data){
-            window.location.href='/api/list?gid='+data.value
-        })
-
-        $("#refresh_api").on("click",function(){
-            var id = $(".api_info .title").attr("data-id");
-            $("#api-main").load("/api/show?id="+id);
-        })
-
-
-
-    
-        form.on('submit(sub)', function(data){
-            var form_data = $("form").serialize();
-            $.post('{{urlfor "CodeController.AjaxSave"}}', form_data, function (out) {
-                if (out.status == 0) {
-                    layer.msg("操作成功",{icon: 1},function () {
-                        window.location.href='{{urlfor "CodeController.List"}}'
-                    })
-                } else {
-                    layer.msg(out.message)
-                }
-            }, "json");
-            return false;
         });
 
-      
-      //但是，如果你的HTML是动态生成的，自动渲染就会失效
-      //因此你需要在相应的地方，执行下述方法来手动渲染，跟这类似的还有 element.init();
-      form.render();
-}); 
-
+        $('.demoTable .layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
 
 </script>

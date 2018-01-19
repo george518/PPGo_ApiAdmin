@@ -1,0 +1,13 @@
+<link rel="stylesheet" href="/static/editor.md/css/editormd.min.css" />
+<h1 class="site-h1">{{.apiPublic.ApiPublicName}}</h1>
+<!--             <div class="site-title">
+            <fieldset><legend><a name="nav">水平导航</a></legend></fieldset>
+
+              
+            </div> -->
+    <div id="markdown-view" style="width: 95%">
+        <textarea style="display:none;" name="markdown">
+{{.apiPublic.Detail}}
+        </textarea>
+    </div>
+{{template "public/editormd_show.html" .}}

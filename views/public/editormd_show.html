@@ -1,0 +1,42 @@
+<script src="/static/js/jquery.min.js?t=13"></script>
+<script src="/static/editor.md/editormd.js" type="text/javascript"></script>
+ <script src="/static/editor.md/lib/marked.min.js"></script>
+ <script src="/static/editor.md/lib/prettify.min.js"></script>
+ <script src="/static/editor.md/lib/raphael.min.js"></script>
+ <script src="/static/editor.md/lib/underscore.min.js"></script>
+ <script src="/static/editor.md/lib/sequence-diagram.min.js"></script>
+ <script src="/static/editor.md/lib/flowchart.min.js"></script>
+ <script src="/static/editor.md/lib/jquery.flowchart.min.js"></script>
+
+<script type="text/javascript">
+    var apiEditor;
+    
+    $(function() {
+        apiEditor = editormd.markdownToHTML("markdown-view", {
+            htmlDecode: "style,script,iframe",  // you can filter tags decode
+            emoji: true,
+            taskList: true,
+            tex: true,  // 默认不解析
+            flowChart: true,  // 默认不解析
+            sequenceDiagram: true,  // 默认不解析
+            codeFold: true,
+        });
+
+        // showMarkdownHtml(editorids);
+
+        // function showMarkdownHtml(ids){
+        //     $.each(ids,function(k,v){
+        //         // console.log(v);
+        //         testEditor = editormd.markdownToHTML(v, {
+        //             htmlDecode: "style,script,iframe",  // you can filter tags decode
+        //             emoji: true,
+        //             taskList: true,
+        //             tex: true,  // 默认不解析
+        //             flowChart: true,  // 默认不解析
+        //             sequenceDiagram: true,  // 默认不解析
+        //             codeFold: true,
+        //         });
+        //     });
+        // }
+    });
+</script>

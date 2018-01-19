@@ -1,62 +1,188 @@
-<style>
-    .nav-title{
-        display: none;
-    }
-</style>
+<link rel="stylesheet" href="/static/editor.md/css/editormd.min.css" />
 <div class="layui-layout layui-layout-admin" style="padding-left: 40px;margin-top: 20px;">
-<form class="layui-form" action="" method="post" >
-    <div class="layui-form-item">
-        <label class="layui-form-label">选择分组</label>
-        <div class="layui-input-inline">
-            <select name="group_id" lay-verify="required"  lay-search="" style="width: 100%">
-                <option value="">请选择分组</option>
-                {{range $index,$elem := .Groups}}
-                <option value="{{$elem.id}}">{{$elem.group_name}}</option>
-                {{end}}
-            </select>
+    <form class="layui-form" action="" method="post">
+        <div class="layui-form-item">
+            <label class="layui-form-label">分组资源</label>
+           
+            <div class="layui-input-inline">
+                <select name="source_id" lay-verify="required"  lay-search="" style="width: 100%">
+                    <option value="">所属资源</option>
+                    {{range $index,$elem := .sourceList}}
+                    <option value="{{$elem.Id}}"> {{$elem.GroupName}}--{{$elem.SourceName}}</option>
+                    {{end}}
+                </select>
+            </div>
         </div>
-        <div class="layui-form-mid layui-word-aux">*</div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">资源名称</label>
-        <div class="layui-input-inline">
-            <input type="text" name="source_name" id="source_name" lay-verify="required" autocomplete="off" placeholder="资源名称" class="layui-input" value="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">接口名称</label>
+            <div class="layui-input-block " style="width: 400px">
+                <input type="text" name="api_name" id="api_name" lay-verify="required" autocomplete="off" placeholder="接口名称：获取用户列表" class="layui-input" value="">
+            </div>
         </div>
-        <div class="layui-form-mid layui-word-aux">*</div>
-    </div>
-    <div class="layui-form-item">
-        <div class="layui-input-block">
-            <button class="layui-btn" lay-submit="" lay-filter="sub">保存</button>
-            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">接口地址</label>
+            <div class="layui-input-inline" style="width: 400px">
+                <input type="text" name="api_url" id="api_url" lay-verify="required" autocomplete="off" placeholder="/User 注意不写host" class="layui-input" value="">
+            </div>
         </div>
-    </div>
-</form>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">请求方式</label>
+            <div class="layui-input-block ">
+                <input type="radio" name="method" value="1" title="GET" checked>
+                <input type="radio" name="method" value="2" title="POST">
+                <input type="radio" name="method" value="3" title="PUT">
+                <input type="radio" name="method" value="5" title="DELETE">
+                <input type="radio" name="method" value="4" title="PATCH">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择模板</label>
+           
+            <div class="layui-input-inline">
+                <select name="templates" lay-filter="templates" lay-verify="required"  lay-search="" style="width: 100%">
+                    <option value="0">选择内容模板</option>
+                    {{range $index,$elem := .templates}}
+                    <option value="{{$elem.Id}}"> {{$elem.TemplateName}}</option>
+                    {{end}}
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">接口详细</label>
+            <div class="layui-input-inline" id="api-editormd" style="border: 1px solid #e4e4e4">
+<textarea name="detail" style="display:none;">
+#### 简要描述：
+- 用户登录接口
+
+
+#### 请求头：
+
+|参数名|是否必须|类型|说明|
+|:----    |:---|:----- |-----   |
+|Content-Type |是  |string |请求类型： application/json   |
+|Content-MD5 |是  |string | 请求内容签名    |
+
+
+#### 请求参数:
+
+|参数名|是否必须|类型|说明|示例值
+|:----    |:---|:----- |-----   |-----   |
+|username |是  |string |用户名   | george518
+|password |是  |string | 密码    | george518
+
+#### 返回参数:
+
+|参数名|类型|说明|
+|:-----  |:-----|-----                           |
+|group_level |int   |用户组id，1：超级管理员；2：普通用户  |
+
+#### 返回示例:
+
+**正确时返回:**
+
+```
+{
+"status": 200,
+"message": "Success",
+"data": {
+    "uid": "1",
+    "account": "admin",
+    "nickname": "Minho",
+    "group_level": 0 ,
+    "create_time": "1436864169",
+    "last_login_time": "0",
+}
+}
+```
+
+**错误时返回:**
+
+
+```
+{
+"status": 300,
+"message": "invalid username"
+"data":{
+    
+}
+}
+```
+
+#### 调用示例:
+
+```
+<?php
+    echo "Hello world";
+```
+
+#### 备注:
+
+- 更多返回错误代码请看首页的错误代码描述
+
+#### 接口版本：
+
+|版本号|制定人|制定日期|修订日期|
+|:----    |:---|:----- |-----   |
+|2.1.0 |郝大全  |2018-01-15 |  2018-01-15 |
+</textarea>
+            </div>
+        </div>
+
+        
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit="" lay-filter="sub">保存</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
 </div>
 <script>
-var $;
-    layui.config({
-            base : "js/"
-    }).use(['form','element','layer','jquery'],function(){
-        var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
-        var $ = layui.jquery;
-    
-        form.on('submit(sub)', function(data){
-            var form_data = data.field;
-            $.post('{{urlfor "ApiController.AjaxSave"}}', form_data, function (out) {
-                if (out.status == 0) {
-                    layer.msg("操作成功",{icon: 1},function () {
-                        window.parent.layer.closeAll();
-                        window.parent.location.reload();
-                    })
-                } else {
-                    layer.msg(out.message)
+var templates = {{.templates}}
+var apiEditor;
+layui.use(['form','element','table','layer','jquery'],function(){
+    var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+    var $ = layui.jquery;
+    var table = layui.table;
+
+    form.on('submit(sub)', function(data){
+        var form_data = data.field;
+        $.post('{{urlfor "ApiController.AjaxSave"}}', form_data, function (out) {
+            if (out.status == 0) {
+                layer.msg("操作成功",{icon: 1},function () {
+                    window.location.href="/api/list";
+                })
+            } else {
+                layer.msg(out.message)
+            }
+        }, "json");
+        return false;
+    });
+
+    form.on('select(templates)', function(data){
+        layer.confirm('是否切换模板？', {
+            btn: ['确定', '取消'] //可以无限个按钮
+            ,btn2: function(index, layero){
+            layer.close(index);
+        }
+        }, function(index, layero){
+            $.each(templates,function(k,v){
+                if (v.Id==data.value) {
+                    apiEditor.setMarkdown(v.Detail)
                 }
-            }, "json");
-            return false;
+            });
+            layer.close(index);
         });
-      
-      //但是，如果你的HTML是动态生成的，自动渲染就会失效
-      //因此你需要在相应的地方，执行下述方法来手动渲染，跟这类似的还有 element.init();
-      form.render();
+        
+    });
+  //但是，如果你的HTML是动态生成的，自动渲染就会失效
+  //因此你需要在相应的地方，执行下述方法来手动渲染，跟这类似的还有 element.init();
+  form.render();
 }); 
 </script>
+
+{{template "public/editormd.html" .}}

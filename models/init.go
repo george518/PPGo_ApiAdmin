@@ -34,7 +34,7 @@ func Init() {
 	}
 	orm.RegisterDataBase("default", "mysql", dsn)
 	orm.RegisterModel(new(Auth), new(Role), new(RoleAuth), new(Admin),
-		new(Group), new(Env), new(Code), new(Api), new(ApiDetail), new(ApiParam))
+		new(Group), new(Env), new(Code), new(ApiSource), new(ApiDetail), new(ApiPublic), new(Template))
 
 	if beego.AppConfig.String("runmode") == "dev" {
 		orm.Debug = true

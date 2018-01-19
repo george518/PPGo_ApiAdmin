@@ -8,8 +8,6 @@
 package models
 
 import (
-	"strconv"
-
 	"github.com/astaxie/beego/orm"
 )
 
@@ -45,32 +43,24 @@ func EnvGetByName(EnvName string) (*Env, error) {
 func EnvGetList(page, pageSize int, filters ...interface{}) ([]*Env, int64) {
 	offset := (page - 1) * pageSize
 	list := make([]*Env, 0)
-	query := orm.NewOrm()
-
-	envName := ""
-	status := 1
-	sql := ""
-	var total int64
+	query := orm.NewOrm().QueryTable(TableName("set_env"))
 	if len(filters) > 0 {
 		l := len(filters)
 		for k := 0; k < l; k += 2 {
-			if filters[k].(string) == "envName" {
-				envName = filters[k+1].(string)
-			}
-
-			if filters[k].(string) == "status" {
-				status = filters[k+1].(int)
-			}
+			query = query.Filter(filters[k].(string), filters[k+1])
 		}
 	}
-	if envName == "" {
-		sql = "SELECT * FROM pp_set_env WHERE status=? ORDER BY id DESC LIMIT ?,?"
-		total, _ = query.Raw(sql, status, strconv.Itoa(offset), strconv.Itoa(pageSize)).QueryRows(&list)
-	} else {
-		sql = "SELECT * FROM pp_set_env WHERE status=? and env_name like ?  ORDER BY id DESC LIMIT ?,?"
-		total, _ = query.Raw(sql, status, "%"+envName+"%", strconv.Itoa(offset), strconv.Itoa(pageSize)).QueryRows(&list)
-	}
+	total, _ := query.Count()
+	query.OrderBy("-id").Limit(pageSize, offset).All(&list)
 	return list, total
+}
+
+func EnvGetByIds(ids string) ([]*Env, error) {
+	list := make([]*Env, 0)
+	sql := "SELECT * FROM pp_set_env WHERE id in(" + ids + ")"
+	orm.NewOrm().Raw(sql).QueryRows(&list)
+
+	return list, nil
 }
 
 func EnvGetById(id int) (*Env, error) {

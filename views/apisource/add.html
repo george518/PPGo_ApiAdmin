@@ -1,0 +1,62 @@
+<style>
+    .nav-title{
+        display: none;
+    }
+</style>
+<div style="margin:50px auto;width: 400px;">
+<form class="layui-form" action="" method="post" >
+    <div class="layui-form-item">
+        <label class="layui-form-label">选择分组</label>
+        <div class="layui-input-inline">
+            <select name="group_id" lay-verify="required"  lay-search="" style="width: 100%">
+                <option value="">请选择分组</option>
+                {{range $index,$elem := .Groups}}
+                <option value="{{$elem.id}}">{{$elem.group_name}}</option>
+                {{end}}
+            </select>
+        </div>
+        <div class="layui-form-mid layui-word-aux">*</div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">资源名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="source_name" id="source_name" lay-verify="required" autocomplete="off" placeholder="资源名称" class="layui-input" value="">
+        </div>
+        <div class="layui-form-mid layui-word-aux">*</div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit="" lay-filter="sub">保存</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+</div>
+<script>
+var $;
+    layui.config({
+            base : "js/"
+    }).use(['form','element','layer','jquery'],function(){
+        var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+        var $ = layui.jquery;
+    
+        form.on('submit(sub)', function(data){
+            var form_data = data.field;
+            $.post('{{urlfor "ApiSourceController.AjaxSave"}}', form_data, function (out) {
+                if (out.status == 0) {
+                    layer.msg("操作成功",{icon: 1},function () {
+                        window.parent.layer.closeAll();
+                        window.parent.location.reload();
+                    })
+                } else {
+                    layer.msg(out.message)
+                }
+            }, "json");
+            return false;
+        });
+      
+      //但是，如果你的HTML是动态生成的，自动渲染就会失效
+      //因此你需要在相应的地方，执行下述方法来手动渲染，跟这类似的还有 element.init();
+      form.render();
+}); 
+</script>

@@ -14,9 +14,35 @@
     </div>
 
     <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label">备注</label>
-        <div class="layui-input-inline" style="width: 300px;">
-            <textarea name="detail" id="detail" placeholder="请输入内容" class="layui-textarea">{{.group.detail}}</textarea>
+        <label class="layui-form-label">说明</label>
+        <div class="layui-input-inline" style="width: 600px;">
+            <textarea id="detail" name="detail" style="display: none;">{{.group.detail}}</textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">环境配置</label>
+        <div class="layui-input-block">
+            {{range $k, $v := .envlists}}
+                <input type="checkbox" name="envids" lay-filter="env_ids" title="{{$v.EnvName}}" value="{{$v.Id}}">
+            {{end}}
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态码</label>
+        <div class="layui-input-block">
+            {{range $k, $v := .codelists}}
+                <input type="checkbox" name="codeids" lay-filter="code_ids" title="{{$v.Code}}" value="{{$v.Id}}">
+            {{end}}
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">公共文档</label>
+        <div class="layui-input-block">
+            {{range $k, $v := .apiPublicLists}}
+                <input type="checkbox" name="apipublicids" lay-filter="api_public_ids" title="{{$v.ApiPublicName}}" value="{{$v.Id}}">
+            {{end}}
         </div>
     </div>
 
@@ -30,19 +56,140 @@
 </form>
 </div>
 <script>
-var $;
-    layui.config({
-            base : "js/"
-    }).use(['form','element','layer','jquery'],function(){
+    layui.use(['form','element','layer','jquery','layedit'],function(){
         var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
         var $ = layui.jquery;
-    
+        var layedit = layui.layedit;
+
+        var index = layedit.build('detail' , {
+            tool: [ 
+              'strong' //加粗
+              ,'italic' //斜体
+              ,'underline' //下划线
+              ,'del' //删除线
+              
+              ,'|' //分割线
+              
+              ,'left' //左对齐
+              ,'center' //居中对齐
+              ,'right' //右对齐
+              ,'link' //超链接
+              ,'unlink' //清除链接
+              ,'face' //表情
+              ,'image' //插入图片
+              ],
+            height: 180
+        }); //建立编辑器
+        //渲染选中值
+        var env_ids="{{.group.env_ids}}",api_public_ids="{{.group.api_public_ids}}",code_ids="{{.group.code_ids}}";
+        var envids=env_ids.split(",");
+        var apipublicids=api_public_ids.split(",");
+        var codeids=code_ids.split(",");
+
+        $.each($("input[type=checkbox][name=envids]"),function(k,v){
+            $.each(envids,function(index,item){  
+                // index是索引值（即下标）   item是每次遍历得到的值；
+                if(item==$(v).val()){
+                   $(v).attr("checked","checked");
+                }
+            });
+        })
+
+        $.each($("input[type=checkbox][name=apipublicids]"),function(k,v){
+            $.each(apipublicids,function(index,item){  
+                // index是索引值（即下标）   item是每次遍历得到的值；
+                if(item==$(v).val()){
+                   $(v).attr("checked","checked");
+                }
+            });
+        })
+
+
+        $.each($("input[type=checkbox][name=codeids]"),function(k,v){
+            $.each(codeids,function(index,item){  
+                // index是索引值（即下标）   item是每次遍历得到的值；
+                if(item==$(v).val()){
+                   $(v).attr("checked","checked");
+                }
+            });
+        })
+
+
+        form.on('checkbox(env_ids)', function(data){
+            if(data.elem.checked==true){
+                envids.push(data.value)
+            }else{
+                $.each(envids,function(index,item){  
+                    // index是索引值（即下标）   item是每次遍历得到的值；
+                    if(item==data.value){
+                        envids.splice(index,1);
+                    }
+                });
+            }
+            envids.sort();
+            env_ids = envids.join(",");
+        }); 
+
+        form.on('checkbox(api_public_ids)', function(data){
+            if(data.elem.checked==true){
+                apipublicids.push(data.value)
+            }else{
+                $.each(apipublicids,function(index,item){  
+                    // index是索引值（即下标）   item是每次遍历得到的值；
+                    if(item==data.value){
+                        apipublicids.splice(index,1);
+                    }
+                });
+            }
+            apipublicids.sort();
+            api_public_ids = apipublicids.join(",");
+        }); 
+
+        form.on('checkbox(code_ids)', function(data){
+            if(data.elem.checked==true){
+                codeids.push(data.value)
+            }else{
+                $.each(codeids,function(index,item){  
+                    // index是索引值（即下标）   item是每次遍历得到的值；
+                    if(item==data.value){
+                        codeids.splice(index,1);
+                    }
+                });
+            }
+            codeids.sort();
+            code_ids = codeids.join(",");
+        }); 
+
+        form.on('checkbox(env_ids)', function(data){
+            if(data.elem.checked==true){
+                envids.push(data.value)
+            }else{
+                $.each(envids,function(index,item){  
+                    // index是索引值（即下标）   item是每次遍历得到的值；
+                    if(item==data.value){
+                        envids.splice(index,1);
+                    }
+                });
+            }
+            envids.sort();
+            env_ids = envids.join(",");
+        }); 
+
         form.on('submit(sub)', function(data){
-            var form_data = $("form").serialize();
+            var form_data = data.field;
+            form_data.env_ids = env_ids;
+            form_data.api_public_ids = api_public_ids;
+            form_data.code_ids = code_ids;
+            form_data.detail = layedit.getContent(index);
+            if (!env_ids || !api_public_ids || !code_ids) {
+              layer.msg("请选择环境、状态码、公共文档");
+              return false;
+            }
+
             $.post('{{urlfor "GroupController.AjaxSave"}}', form_data, function (out) {
                 if (out.status == 0) {
                     layer.msg("操作成功",{icon: 1},function () {
-                        window.location.href='{{urlfor "GroupController.List"}}'
+                      window.location.href='{{urlfor "GroupController.List"}}'
                     })
                 } else {
                     layer.msg(out.message)

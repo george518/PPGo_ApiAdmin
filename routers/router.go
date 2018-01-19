@@ -15,8 +15,11 @@ func init() {
 	beego.Router("/home", &controllers.HomeController{}, "*:Index")
 	beego.Router("/home/start", &controllers.HomeController{}, "*:Start")
 	beego.AutoRouter(&controllers.ApiController{})
+	beego.AutoRouter(&controllers.ApiSourceController{})
+	beego.AutoRouter(&controllers.ApiPublicController{})
+	beego.AutoRouter(&controllers.TemplateController{})
 	beego.AutoRouter(&controllers.ApiDocController{})
-	beego.AutoRouter(&controllers.ApiMonitorController{})
+	// beego.AutoRouter(&controllers.ApiMonitorController{})
 	beego.AutoRouter(&controllers.EnvController{})
 	beego.AutoRouter(&controllers.CodeController{})
 

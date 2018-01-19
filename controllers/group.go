@@ -26,6 +26,15 @@ func (self *GroupController) List() {
 
 func (self *GroupController) Add() {
 	self.Data["pageTitle"] = "新增分组"
+	envlists := envLists()
+	self.Data["envlists"] = envlists
+
+	codelists := codeLists()
+	self.Data["codelists"] = codelists
+
+	apiPublicLists := apiPublicLists()
+	self.Data["apiPublicLists"] = apiPublicLists
+
 	self.display()
 }
 
@@ -38,7 +47,20 @@ func (self *GroupController) Edit() {
 	row["id"] = group.Id
 	row["group_name"] = group.GroupName
 	row["detail"] = group.Detail
+	row["env_ids"] = group.EnvIds
+	row["code_ids"] = group.CodeIds
+	row["api_public_ids"] = group.ApiPublicIds
 	self.Data["group"] = row
+
+	envlists := envLists()
+	self.Data["envlists"] = envlists
+
+	codelists := codeLists()
+	self.Data["codelists"] = codelists
+
+	apiPublicLists := apiPublicLists()
+	self.Data["apiPublicLists"] = apiPublicLists
+
 	self.display()
 }
 
@@ -60,9 +82,8 @@ func (self *GroupController) Table() {
 	filters := make([]interface{}, 0)
 	filters = append(filters, "status", 1)
 	if groupName != "" {
-		filters = append(filters, "groupName", groupName)
+		filters = append(filters, "group_name__icontains", groupName)
 	}
-
 	result, count := models.GroupGetList(page, self.pageSize, filters...)
 	list := make([]map[string]interface{}, len(result))
 	for k, v := range result {
@@ -84,6 +105,9 @@ func (self *GroupController) AjaxSave() {
 
 		Group.GroupName = strings.TrimSpace(self.GetString("group_name"))
 		Group.Detail = strings.TrimSpace(self.GetString("detail"))
+		Group.CodeIds = strings.TrimSpace(self.GetString("code_ids"))
+		Group.EnvIds = strings.TrimSpace(self.GetString("env_ids"))
+		Group.ApiPublicIds = strings.TrimSpace(self.GetString("api_public_ids"))
 		Group.CreateId = self.userId
 		Group.UpdateId = self.userId
 		Group.CreateTime = time.Now().Unix()
@@ -107,6 +131,9 @@ func (self *GroupController) AjaxSave() {
 	// 修改
 	GroupUpdate.GroupName = strings.TrimSpace(self.GetString("group_name"))
 	GroupUpdate.Detail = strings.TrimSpace(self.GetString("detail"))
+	GroupUpdate.CodeIds = strings.TrimSpace(self.GetString("code_ids"))
+	GroupUpdate.EnvIds = strings.TrimSpace(self.GetString("env_ids"))
+	GroupUpdate.ApiPublicIds = strings.TrimSpace(self.GetString("api_public_ids"))
 	GroupUpdate.UpdateId = self.userId
 	GroupUpdate.UpdateTime = time.Now().Unix()
 	GroupUpdate.Status = 1

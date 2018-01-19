@@ -1,0 +1,129 @@
+<link rel="stylesheet" href="/static/editor.md/css/editormd.min.css" />
+<div class="layui-layout layui-layout-admin" style="padding-left: 40px;margin-top: 20px;">
+    <form class="layui-form" action="" method="post">
+        <div class="layui-form-item">
+            <label class="layui-form-label">模板名称</label>
+            <div class="layui-input-block " style="width: 400px">
+                <input type="text" name="template_name" id="template_name" lay-verify="required" autocomplete="off" placeholder="比如：接口模板" class="layui-input" value="">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">文档内容</label>
+            <div class="layui-input-inline" id="api-editormd" style="border: 1px solid #e4e4e4">
+<textarea name="detail" style="display:none;">
+#### 简要描述：
+
+- 用户登录接口
+
+
+#### 请求头：
+
+|参数名|是否必须|类型|说明|
+|:----    |:---|:----- |-----   |
+|Content-Type |是  |string |请求类型： application/json   |
+|Content-MD5 |是  |string | 请求内容签名    |
+
+
+#### 请求参数:
+
+|参数名|是否必须|类型|说明|示例值
+|:----    |:---|:----- |-----   |-----   |
+|username |是  |string |用户名   | george518
+|password |是  |string | 密码    | george518
+
+#### 返回参数:
+
+|参数名|类型|说明|
+|:-----  |:-----|-----                           |
+|group_level |int   |用户组id，1：超级管理员；2：普通用户  |
+
+#### 返回示例:
+
+**正确时返回:**
+
+```
+{
+"status": 200,
+"message": "Success",
+"data": {
+    "uid": "1",
+    "account": "admin",
+    "nickname": "Minho",
+    "group_level": 0 ,
+    "create_time": "1436864169",
+    "last_login_time": "0",
+}
+}
+```
+
+**错误时返回:**
+
+
+```
+{
+"status": 300,
+"message": "invalid username"
+"data":{
+    
+}
+}
+```
+
+#### 调用示例:
+
+```
+
+<?php
+    echo "Hello world";
+```
+#### 备注:
+
+- 更多返回错误代码请看首页的错误代码描述
+
+#### 接口版本：
+
+|版本号|制定人|制定日期|修订日期|
+|:----    |:---|:----- |-----   |
+|2.1.0 |郝大全  |2018-01-15 |  2018-01-15 |
+</textarea>
+            </div>
+        </div>
+
+        
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit="" lay-filter="sub">保存</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+// console.log(sourceList);
+layui.use(['form','element','table','layer','jquery'],function(){
+    var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+    var $ = layui.jquery;
+    var table = layui.table;
+
+    form.on('submit(sub)', function(data){
+        var form_data = data.field;
+        $.post('{{urlfor "TemplateController.AjaxSave"}}', form_data, function (out) {
+            if (out.status == 0) {
+                layer.msg("操作成功",{icon: 1},function () {
+                    window.location.href="/template/list";
+                })
+            } else {
+                layer.msg(out.message)
+            }
+        }, "json");
+        return false;
+    });
+  //但是，如果你的HTML是动态生成的，自动渲染就会失效
+  //因此你需要在相应的地方，执行下述方法来手动渲染，跟这类似的还有 element.init();
+  form.render();
+}); 
+</script>
+
+{{template "public/editormd.html" .}}

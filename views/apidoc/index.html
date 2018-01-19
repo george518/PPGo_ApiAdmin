@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>PPGO 接口平台</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"> 
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="format-detection" content="telephone=no">
+
+        <link rel="stylesheet" href="/static/layui/css/layui.css">
+        <link rel="stylesheet" href="/static/css/index.css" media="all">
+    </head>
+    <body>
+
+    <div class="layui-header header header-doc">
+        <div class="layui-main">
+            <a class="logo" href="/">
+                <h1>PPGO 接口平台</h1>
+                <!-- <img src="//res.layui.com/images/layui/logo.png" alt="layui"> -->
+            </a>
+            
+            <ul class="layui-nav">
+                <li class="layui-nav-item layui-this">
+                    <a href="###">文档<!--  --></a> 
+                </li>
+                <li class="layui-nav-item ">
+                    <a href="###">示例<!-- <span class="layui-badge-dot"></span> --></a>
+                </li> 
+            </ul>
+        </div>
+    </div>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]--> 
+
+    <div class="layui-main site-inline">
+        <div class="site-tree">
+            <div class="layui-form" style="height: 38px; margin: 10px 13px 0 0;">
+                <select lay-filter="groups" lay-search>
+                    {{range $index,$elem := .grouplists}}
+                        <option value="{{$elem.Id}}" {{if eq $elem.Id $.groupId}} selected {{end}}>{{$elem.GroupName}}</option>
+                    {{end}}
+                </select>
+            </div>
+            <ul class="layui-tree">
+                <li><h2>基础说明</h2></li>
+                <ul>
+                    {{range $pi, $pe := .apiPublic}}
+                    <li class="site-tree-noicon">
+                        <a href="###" data-type="public" data-id="{{$pe.Id}}">
+                            <cite>{{$pe.ApiPublicName}}</cite>
+                        </a>
+                    </li>
+                    {{end}}
+                    <li class="site-tree-noicon ">
+                        <a href="###" data-type="env" data-id="{{.groupId}}">
+                            <cite>环境说明</cite>
+                        </a>
+                    </li>
+
+                    <li class="site-tree-noicon ">
+                        <a href="###" data-type="code" data-id="{{.groupId}}">
+                            <cite>状态码说明</cite>
+                        </a>
+                    </li>
+                </ul>
+                {{range $index, $elem := .apiMenu}}
+                {{if $elem}}
+                    <li><h2>{{$elem.SourceName}}</h2></li>
+                    {{range $i, $e := $elem.ApiLists}}
+                    <li class="site-tree-noicon ">
+                        <a href="###" data-type="apidetail" data-id="{{$e.Id}}">
+                            <cite>{{$e.ApiName}}</cite>
+                            <em></em>
+                        </a>
+                    </li>
+                    {{end}}
+                {{end}}
+                {{end}}
+            </ul>
+        </div>
+
+        <div class="site-content" id="api-main">
+            
+
+        </div>
+    </div>
+  
+    <div class="layui-footer footer footer-doc">
+        <div class="layui-main">
+            <p>&copy; 2018 <a href="/">PPGo_ApiAdmin</a> MIT license</p>
+        </div>
+    </div>
+    <script src="/static/layui/layui.js?s=36"></script>
+
+    <script>
+    layui.use(['element', 'layer','form','jquery'], function(){
+        var element = layui.element
+        ,layer = layui.layer;
+        var form = layui.form;
+        var $ = layui.jquery;
+        $(".layui-tree").find("a").on("click",function(){
+            $("#api-main").load("/apidoc/"+$(this).attr("data-type")+"?id="+$(this).attr("data-id"));
+        })
+
+        form.on('select(groups)', function(data){
+            window.location.href="/apidoc/index?id="+data.value;
+        });
+
+
+
+        form.render();
+    });
+    </script>
+    </body>
+</html>

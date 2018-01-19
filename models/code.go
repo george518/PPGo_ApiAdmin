@@ -56,6 +56,14 @@ func CodeGetList(page, pageSize int, filters ...interface{}) ([]*Code, int64) {
 	return list, total
 }
 
+func CodeGetByIds(ids string) ([]*Code, error) {
+	list := make([]*Code, 0)
+	sql := "SELECT * FROM pp_set_code WHERE id in(" + ids + ")"
+	orm.NewOrm().Raw(sql).QueryRows(&list)
+
+	return list, nil
+}
+
 func CodeGetById(id int) (*Code, error) {
 	r := new(Code)
 	err := orm.NewOrm().QueryTable(TableName("set_code")).Filter("id", id).One(r)

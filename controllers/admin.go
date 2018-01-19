@@ -188,7 +188,7 @@ func (self *AdminController) Table() {
 	filters := make([]interface{}, 0)
 	//
 	if realName != "" {
-		filters = append(filters, "realName", realName)
+		filters = append(filters, "real_name__icontains", realName)
 	}
 	result, count := models.AdminGetList(page, self.pageSize, filters...)
 	list := make([]map[string]interface{}, len(result))

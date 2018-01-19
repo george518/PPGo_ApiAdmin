@@ -1,0 +1,90 @@
+<link rel="stylesheet" href="/static/editor.md/css/editormd.min.css" />
+
+<script type="text/javascript">
+    var editorids = new Array();
+</script>
+<div class="layui-row" style="margin-top: 20px;padding-left: 20px">
+    <div class="layui-col-xs10 search_text">
+    <!--         <form class="layui-form" action="" onsubmit="javascript:return false;">
+            <div class="demoTable">
+                <div class="layui-inline" style="width: 40%">
+                    <input class="layui-input" name="sourceName" id="sourceName" autocomplete="off" placeholder="资源名称" >
+                </div>
+                <button class="layui-btn" data-type="reload">查询</button>
+            </div>
+        </form> -->
+        
+    </div>
+    <div class="layui-col-xs2" style="float: right;text-align: right;">
+        <button class="layui-btn layui-btn-normal layui-btn-sm" id="audit"> 审核 </button>&nbsp;&nbsp;&nbsp;&nbsp;
+    </div>
+</div>
+
+<div class="api-infos">
+    <ul>
+        <li><strong>接口名称：</strong> {{.Detail.api_name}}</li>
+        <li><strong>接口地址：</strong> {{.Detail.api_url}}</li>
+        <li><strong>请求方式：</strong> {{.Detail.method}}</li>
+        <li><strong>接口状态：</strong> {{str2html .Detail.audit_status}}</li>
+        <li><strong>开发人员：</strong> {{.Detail.create_name}}</li>
+        <li><strong>维护人员：</strong> {{.Detail.update_name}}</li>
+        <li><strong>审核人员：</strong> {{.Detail.audit_name}}</li>
+        <li><strong>上线时间：</strong> {{if eq .Detail.status 3}}{{.Detail.audit_time}}{{end}}</li>
+        <li><strong>最后修改：</strong> {{.Detail.update_time}}</li>
+    </ul>
+    <div class="title"> &nbsp;接口详细 </div>
+    <hr>
+    <div id="markdown-view" style="width: 95%">
+        <textarea style="display:none;" name="markdown">
+{{.Detail.detail}}
+        </textarea>
+    </div>
+</div>
+
+<script>
+var $;
+layui.use(['form','element','layer','jquery',"code"],function(){
+    var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+    var $ = layui.jquery;
+    var element = layui.element;
+    var id = "{{.Detail.id}}"
+
+    $("#audit").on("click",function(){
+        layer.confirm('是否审核通过', {
+            btn: ['通过', '不通过','取消'] //可以无限个按钮
+            ,function(index, layero){
+                //取消
+              }
+            }, function(index, layero){
+              //通过
+                var add_audit_data = {"ids":id,"status":3}
+                $.post('{{urlfor "ApiController.AjaxChangeStatus"}}', add_audit_data, function (out) {
+                    if (out.status == 0) {
+                        layer.msg("操作成功",{icon: 1},function () {
+                            window.location.reload();
+                        })
+                    } else {
+                        layer.msg(out.message)
+                    }
+                }, "json");
+
+            }, function(index){
+              //不通过
+              var add_audit_data = {"ids":id,"status":4}
+              $.post('{{urlfor "ApiController.AjaxChangeStatus"}}', add_audit_data, function (out) {
+                    if (out.status == 0) {
+                        layer.msg("操作成功",{icon: 1},function () {
+                            window.location.reload();
+                        })
+                    } else {
+                        layer.msg(out.message)
+                    }
+                }, "json");
+            });
+    })
+
+    layui.code();
+});
+</script>
+
+{{template "public/editormd_show.html" .}}
