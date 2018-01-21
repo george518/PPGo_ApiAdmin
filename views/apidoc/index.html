@@ -14,15 +14,15 @@
         <link rel="stylesheet" href="/static/css/apidoc.css?t={{.ts}}" media="all">
         <link rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css" media="all">
     </head>
-    <body>
+    <body style="overflow-x:hidden">
 
     <div class="layui-header">
-        <div style="float: left;background: #393D49;width:10%;height: 60px;line-height: 60px;">
+        <div style="float: left;background: #393D49;width:20%;height: 60px;line-height: 60px;">
            <a class="" href="/" style="margin-left: 20px;">
                 <img src="/static/img/logo.png" alt="ppgo_admin" style="width: 100px;">
             </a> 
         </div>
-        <div style="float: right;width: 90%;">
+        <div style="float: right;width: 80%;">
             <ul class="layui-nav" >
                 <li class="layui-nav-item layui-this">
                     <a href="###">文档</a> 
@@ -40,7 +40,7 @@
       <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
     <![endif]--> 
 
-    <div class="layui-main layui-row" style="width: 100%">
+    <div class="layui-main layui-row" style="width: 100%;">
         <div class="site-tree layui-col-md2 layui-hide-xs">
             <div class="layui-form" style="height: 38px; margin: 10px 13px 0 0;padding-left: 10px;margin-bottom: 20px;">
                 <select lay-filter="groups" lay-search>
@@ -112,6 +112,14 @@
         ,layer = layui.layer;
         var form = layui.form;
         var $ = layui.jquery;
+        var windowWidth    = $(document.body).outerWidth(true);
+        var windowHeight   = $(window).height();
+        var contentHeight = windowHeight-$('.layui-header').outerHeight(true);
+
+        alert(windowHeight+"--"+contentHeight);
+        $("#api-main").height(contentHeight-$('.site-content-header').outerHeight(true));
+        $(".site-tree").height(contentHeight);
+
 
         $(".layui-tree").find("li a").on("click",function(){
             var hs = $(this)
@@ -129,9 +137,12 @@
         $("#taggle").on("click",function(){
             var dis = $(".site-tree").css('display');
             if (dis=="none") {
-                $(".site-tree").show(500);
+                var treeWidth = $('.site-tree').outerWidth(true)
+                $(".site-content").width(windowWidth-treeWidth);
+                $(".site-tree").show();
             }else{
-                $(".site-tree").hide(500);
+                $(".site-tree").hide();
+                $(".site-content").width(windowWidth);
             }
         })
 
