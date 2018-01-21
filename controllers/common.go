@@ -8,6 +8,7 @@
 package controllers
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -46,9 +47,10 @@ func (self *BaseController) Prepare() {
 	self.Data["curAction"] = self.actionName
 	// noAuth := "ajaxsave/ajaxdel/table/loginin/loginout/getnodes/start"
 	// isNoAuth := strings.Contains(noAuth, self.actionName)
-	// if isNoAuth == false {
-	self.auth()
-	// }
+	fmt.Println(self.controllerName)
+	if (strings.Compare(self.controllerName, "apidoc")) != 0 {
+		self.auth()
+	}
 
 	self.Data["loginUserId"] = self.userId
 	self.Data["loginUserName"] = self.userName

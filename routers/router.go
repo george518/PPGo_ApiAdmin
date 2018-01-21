@@ -7,7 +7,7 @@ import (
 
 func init() {
 	// 默认登录
-	beego.Router("/", &controllers.LoginController{}, "*:LoginIn")
+	beego.Router("/", &controllers.ApiDocController{}, "*:Index")
 	beego.Router("/login", &controllers.LoginController{}, "*:LoginIn")
 	beego.Router("/login_out", &controllers.LoginController{}, "*:LoginOut")
 	beego.Router("/no_auth", &controllers.LoginController{}, "*:NoAuth")

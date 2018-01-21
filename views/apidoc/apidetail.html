@@ -1,16 +1,11 @@
 <link rel="stylesheet" href="/static/editor.md/css/editormd.min.css" />
 <link rel="stylesheet" href="/static/css/api.css?s=426">
-<h1 class="site-h1">{{.Detail.api_name}}</h1>
 <div class="api-infos">
     <ul>
         <li><strong>接口名称：</strong> {{.Detail.api_name}}</li>
         <li><strong>接口地址：</strong> {{.Detail.api_url}}</li>
         <li><strong>请求方式：</strong> {{.Detail.method}}</li>
         <li><strong>接口状态：</strong> {{str2html .Detail.audit_status}}</li>
-        <li><strong>开发人员：</strong> {{.Detail.create_name}}</li>
-        <li><strong>维护人员：</strong> {{.Detail.update_name}}</li>
-        <li><strong>审核人员：</strong> {{.Detail.audit_name}}</li>
-        <li><strong>上线时间：</strong> {{if eq .Detail.status 3}}{{.Detail.audit_time}}{{end}}</li>
         <li><strong>最后修改：</strong> {{.Detail.update_time}}</li>
     </ul>
     <div class="title"> &nbsp;接口详细 </div>

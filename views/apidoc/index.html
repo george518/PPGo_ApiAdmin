@@ -11,26 +11,28 @@
         <meta name="format-detection" content="telephone=no">
 
         <link rel="stylesheet" href="/static/layui/css/layui.css">
-        <link rel="stylesheet" href="/static/css/index.css" media="all">
+        <link rel="stylesheet" href="/static/css/apidoc.css?t={{.ts}}" media="all">
+        <link rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css" media="all">
     </head>
     <body>
 
-    <div class="layui-header header header-doc">
-        <div class="layui-main">
-            <a class="logo" href="/">
-                <h1>PPGO 接口平台</h1>
-                <!-- <img src="//res.layui.com/images/layui/logo.png" alt="layui"> -->
-            </a>
-            
-            <ul class="layui-nav">
+    <div class="layui-header">
+        <div style="float: left;background: #393D49;width:10%;height: 60px;line-height: 60px;">
+           <a class="" href="/" style="margin-left: 20px;">
+                <img src="/static/img/logo.png" alt="ppgo_admin" style="width: 100px;">
+            </a> 
+        </div>
+        <div style="float: right;width: 90%;">
+            <ul class="layui-nav" >
                 <li class="layui-nav-item layui-this">
-                    <a href="###">文档<!--  --></a> 
+                    <a href="###">文档</a> 
                 </li>
                 <li class="layui-nav-item ">
-                    <a href="###">示例<!-- <span class="layui-badge-dot"></span> --></a>
+                    <a href="/home">后台<!-- <span class="layui-badge-dot"></span> --></a>
                 </li> 
             </ul>
         </div>
+        
     </div>
     <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
     <!--[if lt IE 9]>
@@ -38,9 +40,9 @@
       <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
     <![endif]--> 
 
-    <div class="layui-main site-inline">
-        <div class="site-tree">
-            <div class="layui-form" style="height: 38px; margin: 10px 13px 0 0;">
+    <div class="layui-main layui-row" style="width: 100%">
+        <div class="site-tree layui-col-md2 layui-hide-xs">
+            <div class="layui-form" style="height: 38px; margin: 10px 13px 0 0;padding-left: 10px;margin-bottom: 20px;">
                 <select lay-filter="groups" lay-search>
                     {{range $index,$elem := .grouplists}}
                         <option value="{{$elem.Id}}" {{if eq $elem.Id $.groupId}} selected {{end}}>{{$elem.GroupName}}</option>
@@ -57,13 +59,13 @@
                         </a>
                     </li>
                     {{end}}
-                    <li class="site-tree-noicon ">
+                    <li class="site-tree-noicon">
                         <a href="###" data-type="env" data-id="{{.groupId}}">
                             <cite>环境说明</cite>
                         </a>
                     </li>
 
-                    <li class="site-tree-noicon ">
+                    <li class="site-tree-noicon">
                         <a href="###" data-type="code" data-id="{{.groupId}}">
                             <cite>状态码说明</cite>
                         </a>
@@ -73,7 +75,7 @@
                 {{if $elem}}
                     <li><h2>{{$elem.SourceName}}</h2></li>
                     {{range $i, $e := $elem.ApiLists}}
-                    <li class="site-tree-noicon ">
+                    <li class="site-tree-noicon">
                         <a href="###" data-type="apidetail" data-id="{{$e.Id}}">
                             <cite>{{$e.ApiName}}</cite>
                             <em></em>
@@ -83,19 +85,25 @@
                 {{end}}
                 {{end}}
             </ul>
+            <div style="clear:both"></div>
+            <div class="copyrights">power by ppgo_admin</div>
         </div>
 
-        <div class="site-content" id="api-main">
-            
-
+        <div class="site-content layui-col-md10">
+            <div class="site-content-header"><i class="fa fa-bars" aria-hidden="true" id="taggle"></i>&nbsp;&nbsp;<span id="content-title">欢迎使用PPGo-ApiAdmin</span> </div>
+            <div id="api-main">
+                <div>
+                    
+                </div>
+            </div>
         </div>
     </div>
   
-    <div class="layui-footer footer footer-doc">
+<!--     <div class="layui-footer">
         <div class="layui-main">
             <p>&copy; 2018 <a href="/">PPGo_ApiAdmin</a> MIT license</p>
         </div>
-    </div>
+    </div> -->
     <script src="/static/layui/layui.js?s=36"></script>
 
     <script>
@@ -104,8 +112,27 @@
         ,layer = layui.layer;
         var form = layui.form;
         var $ = layui.jquery;
-        $(".layui-tree").find("a").on("click",function(){
-            $("#api-main").load("/apidoc/"+$(this).attr("data-type")+"?id="+$(this).attr("data-id"));
+
+        $(".layui-tree").find("li a").on("click",function(){
+            var hs = $(this)
+            if (hs) {
+               $(".layui-tree").find("a").removeClass("active");
+                hs.addClass("active");
+                var title = hs.find("cite").text();
+                $("#content-title").html(title);
+                $("#api-main").load("/apidoc/"+hs.attr("data-type")+"?id="+hs.attr("data-id"));
+            }else{
+                //taggle
+            }
+        })
+
+        $("#taggle").on("click",function(){
+            var dis = $(".site-tree").css('display');
+            if (dis=="none") {
+                $(".site-tree").show(500);
+            }else{
+                $(".site-tree").hide(500);
+            }
         })
 
         form.on('select(groups)', function(data){
