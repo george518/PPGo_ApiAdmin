@@ -92,8 +92,8 @@
         <div class="site-content layui-col-md10">
             <div class="site-content-header"><i class="fa fa-bars" aria-hidden="true" id="taggle"></i>&nbsp;&nbsp;<span id="content-title">欢迎使用PPGo-ApiAdmin</span> </div>
             <div id="api-main">
-                <div>
-                    
+                <div style="width: 200px;height: 50px;margin: 200px auto;">
+                    <img src="/static/img/logo_white.png" alt="">
                 </div>
             </div>
         </div>
@@ -115,8 +115,6 @@
         var windowWidth    = $(document.body).outerWidth(true);
         var windowHeight   = $(window).height();
         var contentHeight = windowHeight-$('.layui-header').outerHeight(true);
-
-        alert(windowHeight+"--"+contentHeight);
         $("#api-main").height(contentHeight-$('.site-content-header').outerHeight(true));
         $(".site-tree").height(contentHeight);
 
