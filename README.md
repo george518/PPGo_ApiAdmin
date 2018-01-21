@@ -2,7 +2,9 @@ PPGo_ApiAdmin
 ====
 什么东西？What?
 ----
-API管理工具 golang开发，基于beego，页面基于layUi,目前版本1.0.0    
+API管理工具 golang开发，基于beego，页面基于layUi,目前版本1.0.0   
+demo地址：http://apiadmin.haodaquan.com
+后台用户名和密码请加群联系获取（有人删数据，没办法）
 
 
 有什么价值？
@@ -64,7 +66,7 @@ API新增界面<br/>
 
 联系我
 ----
-qq:41352963
+qq群号:547564773
 欢迎交流，欢迎提交代码。
 
 
