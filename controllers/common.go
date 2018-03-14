@@ -145,7 +145,7 @@ func (self *BaseController) isPost() bool {
 
 //获取用户IP地址
 func (self *BaseController) getClientIp() string {
-	s := bc.Ctx.Request.RemoteAddr
+	s := self.Ctx.Request.RemoteAddr
 	l := strings.LastIndex(s, ":")
 	return s[0:l]
 }
