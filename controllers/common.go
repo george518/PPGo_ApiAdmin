@@ -11,10 +11,11 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"yin/apiadmin/utils"
 
 	"github.com/astaxie/beego"
-	"github.com/george518/PPGo_ApiAdmin/libs"
 	"github.com/george518/PPGo_ApiAdmin/models"
+	cache "github.com/patrickmn/go-cache"
 )
 
 const (
@@ -58,16 +59,24 @@ func (self *BaseController) Prepare() {
 
 //登录权限验证
 func (self *BaseController) auth() {
-
 	arr := strings.Split(self.Ctx.GetCookie("auth"), "|")
 	self.userId = 0
 	if len(arr) == 2 {
 		idstr, password := arr[0], arr[1]
 		userId, _ := strconv.Atoi(idstr)
 		if userId > 0 {
-			user, err := models.AdminGetById(userId)
-			if err == nil && password == libs.Md5([]byte(self.getClientIp()+"|"+user.Password+user.Salt)) {
+			var err error
+			cheUser, found := utils.Che.Get("uid" + utils.Int2String(userId))
+			user := &models.Admin{}
+			if found && cheUser != nil { //从缓存取用户
+				user = cheUser.(*models.Admin)
+			} else {
+				user, err = models.AdminGetById(userId)
+				utils.Che.Set("uid"+utils.Int2String(user.Id), user, cache.DefaultExpiration)
+			}
+			if err == nil && password == utils.Md5([]byte(self.getClientIp()+"|"+user.Password+user.Salt)) {
 				self.userId = user.Id
+
 				self.loginName = user.LoginName
 				self.userName = user.RealName
 				self.user = user
@@ -75,6 +84,7 @@ func (self *BaseController) auth() {
 			}
 
 			isHasAuth := strings.Contains(self.allowUrl, self.controllerName+"/"+self.actionName)
+			//不需要权限检查
 			noAuth := "ajaxsave/ajaxdel/table/loginin/loginout/getnodes/start/show/ajaxapisave/index/group/public/env/code/apidetail"
 			isNoAuth := strings.Contains(noAuth, self.actionName)
 			if isHasAuth == false && isNoAuth == false {
@@ -91,51 +101,71 @@ func (self *BaseController) auth() {
 }
 
 func (self *BaseController) AdminAuth() {
-	// 左侧导航栏
-	filters := make([]interface{}, 0)
-	filters = append(filters, "status", 1)
-	if self.userId != 1 {
-		//普通管理员
-		adminAuthIds, _ := models.RoleAuthGetByIds(self.user.RoleIds)
-		adminAuthIdArr := strings.Split(adminAuthIds, ",")
-		filters = append(filters, "id__in", adminAuthIdArr)
-	}
-	result, _ := models.AuthGetList(1, 1000, filters...)
-	list := make([]map[string]interface{}, len(result))
-	list2 := make([]map[string]interface{}, len(result))
-	allow_url := ""
-	i, j := 0, 0
-	for _, v := range result {
-		if v.AuthUrl != " " || v.AuthUrl != "/" {
-			allow_url += v.AuthUrl
+	cheMen, found := utils.Che.Get("menu" + utils.Int2String(self.user.Id))
+	if found && cheMen != nil { //从缓存取菜单
+		menu := cheMen.(*CheMenu)
+		//fmt.Println("调用显示菜单")
+		self.Data["SideMenu1"] = menu.List1 //一级菜单
+		self.Data["SideMenu2"] = menu.List2 //二级菜单
+		self.allowUrl = menu.AllowUrl
+	} else {
+		// 左侧导航栏
+		filters := make([]interface{}, 0)
+		filters = append(filters, "status", 1)
+		if self.userId != 1 {
+			//普通管理员
+			adminAuthIds, _ := models.RoleAuthGetByIds(self.user.RoleIds)
+			adminAuthIdArr := strings.Split(adminAuthIds, ",")
+			filters = append(filters, "id__in", adminAuthIdArr)
 		}
-		row := make(map[string]interface{})
-		if v.Pid == 1 && v.IsShow == 1 {
-			row["Id"] = int(v.Id)
-			row["Sort"] = v.Sort
-			row["AuthName"] = v.AuthName
-			row["AuthUrl"] = v.AuthUrl
-			row["Icon"] = v.Icon
-			row["Pid"] = int(v.Pid)
-			list[i] = row
-			i++
+		result, _ := models.AuthGetList(1, 1000, filters...)
+		list := make([]map[string]interface{}, len(result))
+		list2 := make([]map[string]interface{}, len(result))
+		allow_url := ""
+		i, j := 0, 0
+		for _, v := range result {
+			if v.AuthUrl != " " || v.AuthUrl != "/" {
+				allow_url += v.AuthUrl
+			}
+			row := make(map[string]interface{})
+			if v.Pid == 1 && v.IsShow == 1 {
+				row["Id"] = int(v.Id)
+				row["Sort"] = v.Sort
+				row["AuthName"] = v.AuthName
+				row["AuthUrl"] = v.AuthUrl
+				row["Icon"] = v.Icon
+				row["Pid"] = int(v.Pid)
+				list[i] = row
+				i++
+			}
+			if v.Pid != 1 && v.IsShow == 1 {
+				row["Id"] = int(v.Id)
+				row["Sort"] = v.Sort
+				row["AuthName"] = v.AuthName
+				row["AuthUrl"] = v.AuthUrl
+				row["Icon"] = v.Icon
+				row["Pid"] = int(v.Pid)
+				list2[j] = row
+				j++
+			}
 		}
-		if v.Pid != 1 && v.IsShow == 1 {
-			row["Id"] = int(v.Id)
-			row["Sort"] = v.Sort
-			row["AuthName"] = v.AuthName
-			row["AuthUrl"] = v.AuthUrl
-			row["Icon"] = v.Icon
-			row["Pid"] = int(v.Pid)
-			list2[j] = row
-			j++
-		}
+		self.Data["SideMenu1"] = list[:i]  //一级菜单
+		self.Data["SideMenu2"] = list2[:j] //二级菜单
+
+		self.allowUrl = allow_url + "/home/index"
+		cheM := &CheMenu{}
+		cheM.AllowUrl = self.allowUrl
+		cheM.List1 = self.Data["SideMenu1"].([]map[string]interface{})
+		cheM.List2 = self.Data["SideMenu2"].([]map[string]interface{})
+		utils.Che.Set("menu"+utils.Int2String(self.user.Id), cheM, cache.DefaultExpiration)
 	}
 
-	self.Data["SideMenu1"] = list[:i]  //一级菜单
-	self.Data["SideMenu2"] = list2[:j] //二级菜单
+}
 
-	self.allowUrl = allow_url + "/home/index"
+type CheMenu struct {
+	List1    []map[string]interface{}
+	List2    []map[string]interface{}
+	AllowUrl string
 }
 
 // 是否POST提交
