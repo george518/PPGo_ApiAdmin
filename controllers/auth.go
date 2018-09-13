@@ -15,6 +15,8 @@ import (
 
 	"github.com/george518/PPGo_ApiAdmin/utils"
 
+	"strconv"
+
 	"github.com/george518/PPGo_ApiAdmin/models"
 	cache "github.com/patrickmn/go-cache"
 )
@@ -104,7 +106,7 @@ func (self *AuthController) AjaxSave() {
 			self.ajaxMsg(err.Error(), MSG_ERR)
 		}
 	}
-	utils.Che.Set("menu"+utils.Int2String(self.user.Id), nil, cache.DefaultExpiration)
+	utils.Che.Set("menu"+strconv.Itoa(self.user.Id), nil, cache.DefaultExpiration)
 	self.ajaxMsg("", MSG_OK)
 }
 
@@ -117,6 +119,6 @@ func (self *AuthController) AjaxDel() {
 	if err := auth.Update(); err != nil {
 		self.ajaxMsg(err.Error(), MSG_ERR)
 	}
-	utils.Che.Set("menu"+utils.Int2String(self.user.Id), nil, cache.DefaultExpiration)
+	utils.Che.Set("menu"+strconv.Itoa(self.user.Id), nil, cache.DefaultExpiration)
 	self.ajaxMsg("", MSG_OK)
 }

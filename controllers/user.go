@@ -10,7 +10,10 @@ package controllers
 import (
 	"strings"
 	"time"
-	"yin/apiadmin/utils"
+
+	"github.com/george518/PPGo_ApiAdmin/utils"
+
+	"strconv"
 
 	"github.com/george518/PPGo_ApiAdmin/libs"
 	"github.com/george518/PPGo_ApiAdmin/models"
@@ -32,7 +35,7 @@ func (self *UserController) Edit() {
 	row["phone"] = Admin.Phone
 	row["email"] = Admin.Email
 	self.Data["admin"] = row
-	utils.Che.Set("uid"+utils.Int2String(self.user.Id), nil, cache.DefaultExpiration)
+	utils.Che.Set("uid"+strconv.Itoa(self.user.Id), nil, cache.DefaultExpiration)
 	self.display()
 }
 

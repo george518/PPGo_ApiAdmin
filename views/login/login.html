@@ -9,6 +9,14 @@
         <link rel="stylesheet" href="/static/layui/css/layui.css?t=1504439386550" media="all">
         <link rel="stylesheet" href="/static/css/login.css?t=1504439386550" media="all">
     </head>
+
+    <!--登录超时，跳出框架显示登录页		start-->
+    <script>
+        if(self.location !== top.location){
+            top.location = self.location;
+        }
+    </script>
+    <!--登录超时，跳出框架显示登录页		end-->
     <body>
         <div class="layui-carousel video_mask bg-img" id="login_carousel" >
 

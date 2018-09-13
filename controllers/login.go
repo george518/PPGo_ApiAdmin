@@ -16,8 +16,8 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/george518/PPGo_ApiAdmin/libs"
 	"github.com/george518/PPGo_ApiAdmin/models"
+	"github.com/george518/PPGo_ApiAdmin/utils"
 	cache "github.com/patrickmn/go-cache"
-	"gitub.com/george518/PPGo_ApiAdmin/utils"
 )
 
 type LoginController struct {
@@ -48,7 +48,7 @@ func (self *LoginController) LoginIn() {
 				user.LastIp = self.getClientIp()
 				user.LastLogin = time.Now().Unix()
 				user.Update()
-				utils.Che.Set("uid"+utils.Int2String(user.Id), user, cache.DefaultExpiration)
+				utils.Che.Set("uid"+strconv.Itoa(user.Id), user, cache.DefaultExpiration)
 				authkey := libs.Md5([]byte(self.getClientIp() + "|" + user.Password + user.Salt))
 				self.Ctx.SetCookie("auth", strconv.Itoa(user.Id)+"|"+authkey, 7*86400)
 

@@ -11,7 +11,9 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"yin/apiadmin/utils"
+
+	"github.com/george518/PPGo_ApiAdmin/libs"
+	"github.com/george518/PPGo_ApiAdmin/utils"
 
 	"github.com/astaxie/beego"
 	"github.com/george518/PPGo_ApiAdmin/models"
@@ -66,15 +68,16 @@ func (self *BaseController) auth() {
 		userId, _ := strconv.Atoi(idstr)
 		if userId > 0 {
 			var err error
-			cheUser, found := utils.Che.Get("uid" + utils.Int2String(userId))
+
+			cheUser, found := utils.Che.Get("uid" + strconv.Itoa(userId))
 			user := &models.Admin{}
 			if found && cheUser != nil { //从缓存取用户
 				user = cheUser.(*models.Admin)
 			} else {
 				user, err = models.AdminGetById(userId)
-				utils.Che.Set("uid"+utils.Int2String(user.Id), user, cache.DefaultExpiration)
+				utils.Che.Set("uid"+strconv.Itoa(userId), user, cache.DefaultExpiration)
 			}
-			if err == nil && password == utils.Md5([]byte(self.getClientIp()+"|"+user.Password+user.Salt)) {
+			if err == nil && password == libs.Md5([]byte(self.getClientIp()+"|"+user.Password+user.Salt)) {
 				self.userId = user.Id
 
 				self.loginName = user.LoginName
@@ -101,7 +104,7 @@ func (self *BaseController) auth() {
 }
 
 func (self *BaseController) AdminAuth() {
-	cheMen, found := utils.Che.Get("menu" + utils.Int2String(self.user.Id))
+	cheMen, found := utils.Che.Get("menu" + strconv.Itoa(self.user.Id))
 	if found && cheMen != nil { //从缓存取菜单
 		menu := cheMen.(*CheMenu)
 		//fmt.Println("调用显示菜单")
@@ -157,7 +160,7 @@ func (self *BaseController) AdminAuth() {
 		cheM.AllowUrl = self.allowUrl
 		cheM.List1 = self.Data["SideMenu1"].([]map[string]interface{})
 		cheM.List2 = self.Data["SideMenu2"].([]map[string]interface{})
-		utils.Che.Set("menu"+utils.Int2String(self.user.Id), cheM, cache.DefaultExpiration)
+		utils.Che.Set("menu"+strconv.Itoa(self.user.Id), cheM, cache.DefaultExpiration)
 	}
 
 }
