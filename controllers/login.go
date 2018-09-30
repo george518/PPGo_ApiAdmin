@@ -42,7 +42,7 @@ func (self *LoginController) LoginIn() {
 			errorMsg := ""
 			if err != nil || user.Password != libs.Md5([]byte(password+user.Salt)) {
 				errorMsg = "帐号或密码错误"
-			} else if user.Status == -1 {
+			} else if user.Status == 0 {
 				errorMsg = "该帐号已禁用"
 			} else {
 				user.LastIp = self.getClientIp()
