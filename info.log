@@ -1,0 +1,10 @@
+[ORM]2019/01/27 11:41:01 register db Ping `default`, Error 1049: Unknown database 'ppgo_api_admin'
+2019/01/27 11:41:01.472 [1;34m[I] [asm_amd64.s:1333]  http server Running on http://:8081[0m
+[ORM]2019/01/27 11:41:30 register db Ping `default`, Error 1049: Unknown database 'ppgo_api_admin'
+2019/01/27 11:41:30.581 [1;34m[I] [asm_amd64.s:1333]  http server Running on http://:8081[0m
+2019/01/27 11:41:30.581 [1;35m[C] [asm_amd64.s:1333]  ListenAndServe:  listen tcp :8081: bind: address already in use[0m
+[ORM]2019/01/27 11:41:32 register db Ping `default`, Error 1049: Unknown database 'ppgo_api_admin'
+2019/01/27 11:41:32.649 [1;34m[I] [asm_amd64.s:1333]  http server Running on http://:8081[0m
+2019/01/27 11:41:32.649 [1;35m[C] [asm_amd64.s:1333]  ListenAndServe:  listen tcp :8081: bind: address already in use[0m
+apidoc
+must have one register DataBase alias named `default`

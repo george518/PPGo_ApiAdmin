@@ -2,8 +2,8 @@ version: '3'
 services:
   mysql_tools:
     image: mysql:5.7.20
-    #    ports:
-    #      - 4444:3306
+    ports:
+          - 4444:3306
     container_name: mysql_tools
     environment:
     - MYSQL_ROOT_PASSWORD=123456
