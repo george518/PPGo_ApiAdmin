@@ -1,0 +1,42 @@
+version: '3'
+services:
+  mysql_tools:
+    image: mysql:5.7.20
+    ports:
+          - 4444:3306
+    container_name: mysql_tools
+    environment:
+    - MYSQL_ROOT_PASSWORD=123456
+    - MYSQL_DATABASE=ppgo_api_admin
+    volumes:
+    - ./_db:/var/lib/mysql
+    command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci]
+    networks:
+    - net-db
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: db_admin
+    ports:
+    - "8082:80"
+    environment:
+      MYSQL_USER: "root"
+      MYSQL_PASSWORD: "123456"
+      MYSQL_ROOT_PASSWORD: "123456"
+      PMA_HOST: mysql_tools
+    networks:
+    - net-db
+
+  redis_tools:
+    image: redis:latest
+
+    volumes:
+    - ./redis_data:/data
+    - ./redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+    - net-db
+
+networks:
+  net-db:
+    external: true
